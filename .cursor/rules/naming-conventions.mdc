@@ -1,0 +1,26 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Naming Conventions
+
+## File Names
+
+All file names **must** use kebab-case (lowercase letters with hyphens as separators, no spaces or underscores).
+
+*Example*: `user-profile.tsx`, `get-user-info.ts`
+
+## Fields and Variables
+
+All fields and variables **must** use camelCase (lowercase first word, subsequent words capitalized, no underscores).
+
+*Example*: `userEmail`, `createdAt`, `stripeSessionId`
+
+These conventions apply to all new code and when refactoring existing code within the project.
+
+## Enum Values
+
+All enumeration values **must** use UPPERCASE letters (e.g., `ACTIVE`, `PENDING`, `COMPLETED`).
+
+This convention applies to every enum you define in the project to ensure consistency and readability.
