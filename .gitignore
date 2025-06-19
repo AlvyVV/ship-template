@@ -44,3 +44,4 @@ wrangler.toml
 supabase
 
 .env
+package-lock.json

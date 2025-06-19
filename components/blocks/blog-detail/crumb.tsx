@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/breadcrumb";
 
 import { BlogItem } from "@/types/blocks/blog";
-import { Home } from "lucide-react";
+import Icon from "@/components/icon";
 import { Post } from "@/types/post";
 import { useTranslations } from "next-intl";
 
@@ -19,7 +19,7 @@ export default function Crumb({ post }: { post: Post }) {
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href={post.locale === "en" ? "/" : `/${post.locale}`}>
-            <Home className="h-4 w-4" />
+            <Icon name="RiHomeLine" className="h-4 w-4" />
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />

@@ -17,7 +17,6 @@ import {
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/icon";
 import Link from "next/link";
-import { MoreHorizontal } from "lucide-react";
 import { NavItem } from "@/types/blocks/base";
 
 export default function ({ items }: { items: NavItem[] }) {
@@ -28,7 +27,7 @@ export default function ({ items }: { items: NavItem[] }) {
           variant="ghost"
           className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
         >
-          <MoreHorizontal />
+          <Icon name="RiMoreLine" />
           <span className="sr-only">Open menu</span>
         </Button>
       </DropdownMenuTrigger>

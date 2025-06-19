@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Github, Mail, MessageCircle, Twitter } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/icon";
@@ -95,7 +94,7 @@ export default function Feedback({
             className="h-12 w-12 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
             onClick={() => setShowFeedback(true)}
           >
-            <MessageCircle className="h-6 w-6" />
+            <Icon name="RiMessage3Line" className="h-6 w-6" />
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[500px]">

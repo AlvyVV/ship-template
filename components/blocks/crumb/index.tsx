@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import Icon from "@/components/icon";
 import Link from "next/link";
 import { NavItem } from "@/types/blocks/base";
 
@@ -19,7 +19,7 @@ export default function Crumb({ items }: { items: NavItem[] }) {
             </Link>
 
             {!isActive && (
-              <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground/40" />
+              <Icon name="RiArrowRightSLine" className="h-4 w-4 mx-2 text-muted-foreground/40" />
             )}
           </div>
         );

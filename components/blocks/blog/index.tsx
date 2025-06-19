@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import Icon from "@/components/icon";
 import { Blog as BlogType } from "@/types/blocks/blog";
 
 export default function Blog({ blog }: { blog: BlogType }) {
@@ -48,7 +48,7 @@ export default function Blog({ blog }: { blog: BlogType }) {
                   {blog.readMoreText && (
                     <p className="flex items-center hover:underline">
                       {blog.readMoreText}
-                      <ArrowRight className="ml-2 size-4" />
+                      <Icon name="RiArrowRightLine" className="ml-2 size-4" />
                     </p>
                   )}
                 </div>

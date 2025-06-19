@@ -1,5 +1,3 @@
-import { Heart, Zap } from "lucide-react";
-
 import Icon from "@/components/icon";
 import { Section as SectionType } from "@/types/blocks/section";
 

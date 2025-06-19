@@ -1,6 +1,6 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
-import { Star } from "lucide-react";
+import Icon from "@/components/icon";
 
 export default function HappyUsers() {
   return (
@@ -18,7 +18,8 @@ export default function HappyUsers() {
       <div className="flex flex-col items-center gap-1 md:items-start">
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, index) => (
-            <Star
+            <Icon
+              name="RiStarLine"
               key={index}
               className="size-5 fill-yellow-400 text-yellow-400"
             />

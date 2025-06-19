@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import Icon from "@/components/icon";
 import {
   Carousel,
   CarouselApi,
@@ -54,7 +54,7 @@ export default function Showcase1({ section }: { section: SectionType }) {
               disabled={!canScrollPrev}
               className="disabled:pointer-events-auto"
             >
-              <ArrowLeft className="size-5" />
+              <Icon name="RiArrowLeftLine" className="size-5" />
             </Button>
             <Button
               size="icon"
@@ -65,7 +65,7 @@ export default function Showcase1({ section }: { section: SectionType }) {
               disabled={!canScrollNext}
               className="disabled:pointer-events-auto"
             >
-              <ArrowRight className="size-5" />
+              <Icon name="RiArrowRightLine" className="size-5" />
             </Button>
           </div>
         </div>

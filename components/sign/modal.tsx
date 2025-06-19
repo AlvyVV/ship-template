@@ -20,7 +20,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { SiGithub, SiGmail, SiGoogle } from "react-icons/si";
+import Icon from "@/components/icon";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -98,7 +98,7 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
             signIn("google");
           }}
         >
-          <SiGoogle className="w-4 h-4" />
+          <Icon name="SiGoogle" className="w-4 h-4" />
           {t("sign_modal.google_sign_in")}
         </Button>
       )}
@@ -111,7 +111,7 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
             signIn("github");
           }}
         >
-          <SiGithub className="w-4 h-4" />
+          <Icon name="SiGithub" className="w-4 h-4" />
           {t("sign_modal.github_sign_in")}
         </Button>
       )}

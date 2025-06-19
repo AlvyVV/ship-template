@@ -1,11 +1,5 @@
 "use client";
 
-import {
-  IconDots,
-  IconFolder,
-  IconShare3,
-  IconTrash,
-} from "@tabler/icons-react";
 
 import {
   DropdownMenu,
@@ -60,7 +54,7 @@ export function Library({ library }: { library: LibraryType }) {
                   showOnHover
                   className="data-[state=open]:bg-accent rounded-sm"
                 >
-                  <IconDots />
+                  <Icon name="BsThreeDots" />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger> */}
@@ -70,16 +64,16 @@ export function Library({ library }: { library: LibraryType }) {
                 align={isMobile ? "end" : "start"}
               >
                 <DropdownMenuItem>
-                  <IconFolder />
+                  <Icon name="RiFolder3Line" />
                   <span>Open</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <IconShare3 />
+                  <Icon name="RiShareLine" />
                   <span>Share</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive">
-                  <IconTrash />
+                  <Icon name="RiDeleteBin6Line" />
                   <span>Delete</span>
                 </DropdownMenuItem>
               </DropdownMenuContent> */}
@@ -90,7 +84,7 @@ export function Library({ library }: { library: LibraryType }) {
         {library.more && (
           <SidebarMenuItem>
             <SidebarMenuButton className="text-sidebar-foreground/70">
-              <IconDots className="text-sidebar-foreground/70" />
+              <Icon name="BsThreeDots" className="text-sidebar-foreground/70" />
               <span>{library.more.title}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>

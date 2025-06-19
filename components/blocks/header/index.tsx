@@ -28,7 +28,6 @@ import { Header as HeaderType } from "@/types/blocks/header";
 import Icon from "@/components/icon";
 import { Link } from "@/i18n/routing";
 import LocaleToggle from "@/components/locale/toggle";
-import { Menu } from "lucide-react";
 import SignToggle from "@/components/sign/toggle";
 import ThemeToggle from "@/components/theme/toggle";
 import { cn } from "@/lib/utils";
@@ -189,7 +188,7 @@ export default function Header({ header }: { header: HeaderType }) {
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="default" size="icon">
-                  <Menu className="size-4" />
+                  <Icon name="RiMenuLine" className="size-4" />
                 </Button>
               </SheetTrigger>
               <SheetContent className="overflow-y-auto">

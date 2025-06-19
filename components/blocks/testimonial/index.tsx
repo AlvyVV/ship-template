@@ -11,7 +11,6 @@ import AutoScroll from "embla-carousel-auto-scroll";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/icon";
 import { Section as SectionType } from "@/types/blocks/section";
-import { Star } from "lucide-react";
 import { useRef } from "react";
 
 export default function Testimonial({ section }: { section: SectionType }) {
@@ -75,7 +74,8 @@ export default function Testimonial({ section }: { section: SectionType }) {
                       </div>
                       <div className="flex gap-1">
                         {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
+                          <Icon
+                            name="RiStarLine"
                             key={i}
                             className="size-5 fill-amber-500 text-amber-500"
                           />

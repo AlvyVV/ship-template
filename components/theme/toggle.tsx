@@ -1,6 +1,6 @@
 "use client";
 
-import { BsMoonStars, BsSun } from "react-icons/bs";
+import Icon from "@/components/icon";
 
 import { CacheKey } from "@/services/constant";
 import { cacheSet } from "@/lib/cache";
@@ -21,18 +21,16 @@ export default function () {
   return (
     <div className="flex items-center gap-x-2 px-2">
       {theme === "dark" ? (
-        <BsSun
+        <Icon
+          name="BsSun"
           className="cursor-pointer text-lg text-muted-foreground"
           onClick={() => handleThemeChange("light")}
-          width={80}
-          height={20}
         />
       ) : (
-        <BsMoonStars
+        <Icon
+          name="BsMoonStars"
           className="cursor-pointer text-lg text-muted-foreground"
           onClick={() => handleThemeChange("dark")}
-          width={80}
-          height={20}
         />
       )}
     </div>

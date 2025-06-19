@@ -1,6 +1,5 @@
 "use client";
 
-import { Check, Loader } from "lucide-react";
 import { PricingItem, Pricing as PricingType } from "@/types/blocks/pricing";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useEffect, useState } from "react";
@@ -222,7 +221,7 @@ export default function Pricing({ pricing }: { pricing: PricingType }) {
                           {item.features.map((feature, fi) => {
                             return (
                               <li className="flex gap-2" key={`feature-${fi}`}>
-                                <Check className="mt-1 size-4 shrink-0" />
+                                <Icon name="RiCheckLine" className="mt-1 size-4 shrink-0" />
                                 {feature}
                               </li>
                             );
@@ -271,7 +270,7 @@ export default function Pricing({ pricing }: { pricing: PricingType }) {
                             <p>{item.button.title}</p>
                           )}
                           {isLoading && productId === item.productId && (
-                            <Loader className="mr-2 h-4 w-4 animate-spin" />
+                            <Icon name="RiLoader4Line" className="mr-2 h-4 w-4 animate-spin" />
                           )}
                           {item.button.icon && (
                             <Icon name={item.button.icon} className="size-4" />

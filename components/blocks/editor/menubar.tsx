@@ -1,27 +1,5 @@
 import { useCurrentEditor } from "@tiptap/react";
-import {
-  Bold,
-  Italic,
-  Strikethrough,
-  Code,
-  Type,
-  Heading1,
-  Heading2,
-  Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
-  List,
-  ListOrdered,
-  Code2,
-  Quote,
-  Minus,
-  CornerDownLeft,
-  Undo2,
-  Redo2,
-  Palette,
-  Eraser,
-} from "lucide-react";
+import Icon from "@/components/icon";
 
 export default function Menubar() {
   const { editor } = useCurrentEditor();
@@ -41,7 +19,7 @@ export default function Menubar() {
         }`}
         title="Bold"
       >
-        <Bold className="w-4 h-4" />
+        <Icon name="RiBold" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -52,7 +30,7 @@ export default function Menubar() {
         }`}
         title="Italic"
       >
-        <Italic className="w-4 h-4" />
+        <Icon name="RiItalic" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -63,7 +41,7 @@ export default function Menubar() {
         }`}
         title="Strike"
       >
-        <Strikethrough className="w-4 h-4" />
+        <Icon name="RiStrikethrough" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -74,7 +52,7 @@ export default function Menubar() {
         }`}
         title="Code"
       >
-        <Code className="w-4 h-4" />
+        <Icon name="RiCodeLine" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -82,7 +60,7 @@ export default function Menubar() {
         className="p-2 rounded hover:bg-gray-100"
         title="Clear marks"
       >
-        <Eraser className="w-4 h-4" />
+        <Icon name="RiEraserLine" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -92,7 +70,7 @@ export default function Menubar() {
         }`}
         title="Paragraph"
       >
-        <Type className="w-4 h-4" />
+        <Icon name="RiText" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -102,7 +80,7 @@ export default function Menubar() {
         }`}
         title="Heading 1"
       >
-        <Heading1 className="w-4 h-4" />
+        <Icon name="RiH1" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -112,7 +90,7 @@ export default function Menubar() {
         }`}
         title="Heading 2"
       >
-        <Heading2 className="w-4 h-4" />
+        <Icon name="RiH2" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -122,7 +100,7 @@ export default function Menubar() {
         }`}
         title="Heading 3"
       >
-        <Heading3 className="w-4 h-4" />
+        <Icon name="RiH3" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -132,7 +110,7 @@ export default function Menubar() {
         }`}
         title="Heading 4"
       >
-        <Heading4 className="w-4 h-4" />
+        <Icon name="RiH4" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -142,7 +120,7 @@ export default function Menubar() {
         }`}
         title="Heading 5"
       >
-        <Heading5 className="w-4 h-4" />
+        <Icon name="RiH5" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -152,7 +130,7 @@ export default function Menubar() {
         }`}
         title="Heading 6"
       >
-        <Heading6 className="w-4 h-4" />
+        <Icon name="RiH6" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -162,7 +140,7 @@ export default function Menubar() {
         }`}
         title="Bullet list"
       >
-        <List className="w-4 h-4" />
+        <Icon name="RiListUnordered" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -172,7 +150,7 @@ export default function Menubar() {
         }`}
         title="Ordered list"
       >
-        <ListOrdered className="w-4 h-4" />
+        <Icon name="RiListOrdered2" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -182,7 +160,7 @@ export default function Menubar() {
         }`}
         title="Code block"
       >
-        <Code2 className="w-4 h-4" />
+        <Icon name="RiCodeBoxLine" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -192,7 +170,7 @@ export default function Menubar() {
         }`}
         title="Blockquote"
       >
-        <Quote className="w-4 h-4" />
+        <Icon name="RiDoubleQuotesL" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -200,7 +178,7 @@ export default function Menubar() {
         className="p-2 rounded hover:bg-gray-100"
         title="Horizontal rule"
       >
-        <Minus className="w-4 h-4" />
+        <Icon name="RiSubtractLine" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -208,7 +186,7 @@ export default function Menubar() {
         className="p-2 rounded hover:bg-gray-100"
         title="Hard break"
       >
-        <CornerDownLeft className="w-4 h-4" />
+        <Icon name="RiCornerDownLeftLine" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -217,7 +195,7 @@ export default function Menubar() {
         className="p-2 rounded hover:bg-gray-100"
         title="Undo"
       >
-        <Undo2 className="w-4 h-4" />
+        <Icon name="RiArrowGoBackLine" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -226,7 +204,7 @@ export default function Menubar() {
         className="p-2 rounded hover:bg-gray-100"
         title="Redo"
       >
-        <Redo2 className="w-4 h-4" />
+        <Icon name="RiArrowGoForwardLine" className="w-4 h-4" />
       </button>
       <button
         type="button"
@@ -238,7 +216,7 @@ export default function Menubar() {
         }`}
         title="Purple"
       >
-        <Palette className="w-4 h-4" />
+        <Icon name="RiPaletteLine" className="w-4 h-4" />
       </button>
     </div>
   );

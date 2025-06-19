@@ -1,7 +1,6 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronsUpDown, LogOut } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import {
   DropdownMenu,
@@ -62,7 +61,7 @@ export default function SidebarUser({ account }: { account?: Account }) {
                     </span>
                     <span className="truncate text-xs">{user.email}</span>
                   </div>
-                  <ChevronsUpDown className="ml-auto size-4" />
+                  <Icon name="RiExpandUpDownLine" className="ml-auto size-4" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -109,7 +108,7 @@ export default function SidebarUser({ account }: { account?: Account }) {
                     className="cursor-pointer"
                     onClick={() => signOut()}
                   >
-                    <LogOut />
+                    <Icon name="RiLogoutBoxLine" />
                     {t("user.sign_out")}
                   </DropdownMenuItem>
                 </DropdownMenuGroup>

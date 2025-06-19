@@ -21,7 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/icon";
 import { Input } from "@/components/ui/input";
-import { Loader } from "lucide-react";
 import MarkdownEditor from "@/components/blocks/mdeditor";
 import Editor from "@/components/blocks/editor";
 
@@ -224,7 +223,7 @@ export default function ({
             disabled={loading}
           >
             {loading ? (
-              <Loader className="mr-2 h-4 w-4 animate-spin" />
+              <Icon name="RiLoader4Line" className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               submit.button.icon && (
                 <Icon name={submit.button.icon} className="size-4" />

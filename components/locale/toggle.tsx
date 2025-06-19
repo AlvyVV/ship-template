@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { useParams, usePathname, useRouter } from "next/navigation";
 
-import { MdLanguage } from "react-icons/md";
+import Icon from "@/components/icon";
 import { localeNames } from "@/i18n/locale";
 
 export default function ({ isIcon = false }: { isIcon?: boolean }) {
@@ -30,7 +30,7 @@ export default function ({ isIcon = false }: { isIcon?: boolean }) {
   return (
     <Select value={locale} onValueChange={handleSwitchLanguage}>
       <SelectTrigger className="flex items-center gap-2 border-none text-muted-foreground outline-hidden hover:bg-transparent focus:ring-0 focus:ring-offset-0">
-        <MdLanguage className="text-xl" />
+        <Icon name="MdLanguage" className="text-xl" />
         {!isIcon && (
           <span className="hidden md:block">{localeNames[locale]}</span>
         )}
