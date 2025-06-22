@@ -1,128 +1,131 @@
-"use client";
+'use client';
 
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-} from "react";
-import { cacheGet, cacheRemove } from "@/lib/cache";
+import { parseUserInfoCookie } from '@/lib/cookie';
+import { ReactNode, createContext, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { CacheKey } from "@/services/constant";
-import { ContextValue } from "@/types/context";
-import { User } from "@/types/user";
-import dayjs from "dayjs";
-import useOneTapLogin from "@/hooks/useOneTapLogin";
-import { useSession } from "next-auth/react";
+import { ContextValue } from '@/types/context';
+import { User } from '@/types/user';
 
+// 创建专用的 Context
+const ThemeContext = createContext<{
+  theme: string;
+  setTheme: (theme: string) => void;
+}>({
+  theme: '',
+  setTheme: () => {},
+});
+
+const UserContext = createContext<{
+  user: User | null;
+  setUser: (user: User | null) => void;
+}>({
+  user: null,
+  setUser: () => {},
+});
+
+const ModalContext = createContext<{
+  showSignModal: boolean;
+  setShowSignModal: (show: boolean) => void;
+}>({
+  showSignModal: false,
+  setShowSignModal: () => {},
+});
+
+// 为了向后兼容，保留原来的 AppContext
 const AppContext = createContext({} as ContextValue);
 
+// 专用的 hooks，用于细粒度订阅
+export const useTheme = () => useContext(ThemeContext);
+export const useUser = () => useContext(UserContext);
+export const useModal = () => useContext(ModalContext);
+
+// 向后兼容的 hook
 export const useAppContext = () => useContext(AppContext);
 
-export const AppContextProvider = ({ children }: { children: ReactNode }) => {
-  if (
-    process.env.NEXT_PUBLIC_AUTH_GOOGLE_ONE_TAP_ENABLED === "true" &&
-    process.env.NEXT_PUBLIC_AUTH_GOOGLE_ID
-  ) {
-    useOneTapLogin();
-  }
-
-  const { data: session } = useSession();
-
+// 主题提供者组件
+const ThemeProvider = memo(({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<string>(() => {
-    return process.env.NEXT_PUBLIC_DEFAULT_THEME || "";
+    return process.env.NEXT_PUBLIC_DEFAULT_THEME || '';
   });
 
-  const [showSignModal, setShowSignModal] = useState<boolean>(false);
+  const themeValue = useMemo(() => ({ theme, setTheme }), [theme]);
+
+  return <ThemeContext.Provider value={themeValue}>{children}</ThemeContext.Provider>;
+});
+ThemeProvider.displayName = 'ThemeProvider';
+
+// 用户提供者组件
+const UserProvider = memo(({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const [showFeedback, setShowFeedback] = useState<boolean>(false);
-
-  const updateInvite = useCallback(async (user: User) => {
+  // 使用 useCallback 包装 fetchUserInfo 函数，避免在每次渲染时重新创建
+  const fetchUserInfo = useCallback(async function () {
     try {
-      if (user.invitedBy) {
-        // user already been invited
-        console.log("user already been invited", user.invitedBy);
+      console.log('fetchUserInfo - starting...');
+      // 使用 parseUserInfoCookie 替代内联的 cookie 解析逻辑
+      const userData = parseUserInfoCookie();
+
+      console.log('fetchUserInfo - parsed userData:', userData);
+
+      if (!userData) {
+        console.log('fetchUserInfo - No user_info cookie found');
         return;
       }
 
-      const inviteCode = cacheGet(CacheKey.InviteCode);
-      if (!inviteCode) {
-        // no invite code
-        return;
-      }
-
-      const userCreatedAt = dayjs(user.createdAt).unix();
-      const currentTime = dayjs().unix();
-      const timeDiff = Number(currentTime - userCreatedAt);
-
-      if (timeDiff <= 0 || timeDiff > 7200) {
-        // user created more than 2 hours
-        console.log("user created more than 2 hours");
-        return;
-      }
-
-      // update invite relation
-      console.log("update invite", inviteCode, user.uuid);
-      const req = {
-        invite_code: inviteCode,
-        user_uuid: user.uuid,
-      };
-      const resp = await fetch("/api/update-invite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(req),
-      });
-      if (!resp.ok) {
-        throw new Error("update invite failed with status: " + resp.status);
-      }
-      const { code, message, data } = await resp.json();
-      if (code !== 0) {
-        throw new Error(message);
-      }
-
-      setUser(data);
-      cacheRemove(CacheKey.InviteCode);
+      setUser(userData);
     } catch (e) {
-      console.log("update invite failed: ", e);
+      console.log('fetchUserInfo - error:', e);
     }
   }, []);
 
-  const fetchUserInfo = useCallback(async function () {
-    try {
-      const resp = await fetch("/api/get-user-info", {
-        method: "POST",
-      });
-
-      if (!resp.ok) {
-        throw new Error("fetch user info failed with status: " + resp.status);
-      }
-
-      const { code, message, data } = await resp.json();
-      if (code !== 0) {
-        throw new Error(message);
-      }
-
-      setUser(data);
-
-      updateInvite(data);
-    } catch (e) {
-      console.log("fetch user info failed");
-    }
-  }, [updateInvite]);
-
+  // 在组件挂载时获取用户信息
   useEffect(() => {
-    if (session && session.user) {
-      fetchUserInfo();
-    }
-  }, [session, fetchUserInfo]);
+    fetchUserInfo();
+  }, [fetchUserInfo]);
 
-  const contextValue = useMemo(
+  const userValue = useMemo(() => ({ user, setUser }), [user]);
+
+  return <UserContext.Provider value={userValue}>{children}</UserContext.Provider>;
+});
+UserProvider.displayName = 'UserProvider';
+
+// 模态窗口提供者组件
+const ModalProvider = memo(({ children }: { children: ReactNode }) => {
+  const [showSignModal, setShowSignModal] = useState<boolean>(false);
+
+  const modalValue = useMemo(
+    () => ({
+      showSignModal,
+      setShowSignModal,
+    }),
+    [showSignModal]
+  );
+
+  return <ModalContext.Provider value={modalValue}>{children}</ModalContext.Provider>;
+});
+ModalProvider.displayName = 'ModalProvider';
+
+// 主应用上下文提供者
+export const AppContextProvider = ({ children }: { children: ReactNode }) => {
+  return (
+    <ThemeProvider>
+      <UserProvider>
+        <ModalProvider>
+          <AppContextBridge>{children}</AppContextBridge>
+        </ModalProvider>
+      </UserProvider>
+    </ThemeProvider>
+  );
+};
+
+// 向后兼容的桥接组件
+const AppContextBridge = memo(({ children }: { children: ReactNode }) => {
+  const { theme, setTheme } = useTheme();
+  const { user, setUser } = useUser();
+  const { showSignModal, setShowSignModal } = useModal();
+
+  // 整合所有上下文到一个值中，用于向后兼容
+  const appContextValue = useMemo(
     () => ({
       theme,
       setTheme,
@@ -130,15 +133,10 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       setShowSignModal,
       user,
       setUser,
-      showFeedback,
-      setShowFeedback,
     }),
-    [theme, showSignModal, user, showFeedback]
+    [theme, showSignModal, user, setTheme, setShowSignModal, setUser]
   );
 
-  return (
-    <AppContext.Provider value={contextValue}>
-      {children}
-    </AppContext.Provider>
-  );
-};
+  return <AppContext.Provider value={appContextValue}>{children}</AppContext.Provider>;
+});
+AppContextBridge.displayName = 'AppContextBridge';

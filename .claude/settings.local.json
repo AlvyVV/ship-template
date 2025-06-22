@@ -17,7 +17,13 @@
       "Bash(npm install)",
       "Bash(pnpm install:*)",
       "Bash(npx next build:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "WebFetch(domain:v5.ai-sdk.dev)",
+      "Bash(npm install:*)",
+      "WebFetch(domain:ai-sdk.dev)",
+      "Bash(pnpm dev:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npm view:*)"
     ],
     "deny": []
   }

@@ -1,5 +1,5 @@
-import ImageStyleTransferBlock from '@/components/blocks/image-style-transfer'
-import type { ImageStyleTransfer } from '@/types/blocks/image-style-transfer'
+import ImageStyleTransferBlock from '@/components/blocks/image-style-transfer';
+import type { ImageStyleTransfer } from '@/types/blocks/image-style-transfer';
 
 const imageStyleTransferData: ImageStyleTransfer = {
   name: 'image-style-transfer',
@@ -11,46 +11,52 @@ const imageStyleTransferData: ImageStyleTransfer = {
     uploadPlaceholder: {
       title: 'Drop your image here',
       description: 'Supports JPG, PNG, WebP formats up to 10MB',
-      buttonText: 'Choose Image'
+      buttonText: 'Choose Image',
     },
-    changeButtonText: 'Change Image'
+    changeButtonText: 'Change Image',
   },
   resultSection: {
     title: 'Styled Result',
     uploadFirstMessage: {
       title: 'Upload an image first',
-      description: 'Select an image and choose a style to see the transformation'
+      description: 'Select an image and choose a style to see the transformation',
     },
     processingMessage: {
       title: 'Creating magic...',
-      description: 'AI is applying the selected style to your image'
+      description: 'AI is applying the selected style to your image',
     },
     readyMessage: {
       title: 'Select a style',
-      description: 'Choose an artistic style below to transform your image'
+      description: 'Choose an artistic style below to transform your image',
     },
     downloadButton: {
-      title: 'Download Image'
+      title: 'Download Image',
     },
     tryAnotherButton: {
-      title: 'Try Another Style'
-    }
+      title: 'Try Another Style',
+    },
   },
   styleSelection: {
     title: 'Choose Artistic Style',
-    description: 'Select from our collection of AI-powered artistic filters and transformations',
+    description: '',
     uploadFirstMessage: 'Upload image first',
-    selectedBadgeText: 'Selected'
+    selectedBadgeText: 'Selected',
   },
   styleOptions: [
     {
       id: 'van-gogh',
+      code: 'GR-GBL',
       name: 'Van Gogh',
       description: 'Post-impressionist swirls and bold colors',
       icon: 'LuBrush',
       gradient: 'from-blue-500 to-yellow-500',
       bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200'
+      borderColor: 'border-blue-200',
+      prompt:
+        '请将这张照片转换为吉卜力风格的动画场景，参考《千与千寻》和《龙猫》的艺术风格。保留照片中的基本构图和人物位置，但使用吉卜力特有的艺术表现手法重新诠释。具体要求： 1) 人物改为吉卜力风格的大眼睛角色，但保留原始面部表情和姿态 2) 背景环境增加更多自然元素和细节，如飞鸟、小动物或飘动的叶子 3) 使用温暖柔和的色调，增强光影表现 4) 保留照片中的关键情感元素和构图强度 5) 添加些微动感，如飘动的头发或衣物',
+      modelProvider: 'grsai',
+      model: 'sora-image',
+      aspectRatio: '1:1',
     },
     {
       id: 'picasso',
@@ -59,7 +65,7 @@ const imageStyleTransferData: ImageStyleTransfer = {
       icon: 'LuShapes',
       gradient: 'from-red-500 to-pink-500',
       bgColor: 'bg-red-50',
-      borderColor: 'border-red-200'
+      borderColor: 'border-red-200',
     },
     {
       id: 'monet',
@@ -68,7 +74,7 @@ const imageStyleTransferData: ImageStyleTransfer = {
       icon: 'LuDroplets',
       gradient: 'from-green-500 to-blue-500',
       bgColor: 'bg-green-50',
-      borderColor: 'border-green-200'
+      borderColor: 'border-green-200',
     },
     {
       id: 'anime',
@@ -77,7 +83,7 @@ const imageStyleTransferData: ImageStyleTransfer = {
       icon: 'LuSparkles',
       gradient: 'from-purple-500 to-pink-500',
       bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-200'
+      borderColor: 'border-purple-200',
     },
     {
       id: 'watercolor',
@@ -86,7 +92,7 @@ const imageStyleTransferData: ImageStyleTransfer = {
       icon: 'LuPaintBucket',
       gradient: 'from-cyan-500 to-blue-500',
       bgColor: 'bg-cyan-50',
-      borderColor: 'border-cyan-200'
+      borderColor: 'border-cyan-200',
     },
     {
       id: 'sketch',
@@ -95,7 +101,7 @@ const imageStyleTransferData: ImageStyleTransfer = {
       icon: 'LuPencil',
       gradient: 'from-gray-500 to-slate-500',
       bgColor: 'bg-gray-50',
-      borderColor: 'border-gray-200'
+      borderColor: 'border-gray-200',
     },
     {
       id: 'oil-painting',
@@ -104,7 +110,7 @@ const imageStyleTransferData: ImageStyleTransfer = {
       icon: 'LuPalette',
       gradient: 'from-amber-500 to-orange-500',
       bgColor: 'bg-amber-50',
-      borderColor: 'border-amber-200'
+      borderColor: 'border-amber-200',
     },
     {
       id: 'cartoon',
@@ -113,21 +119,21 @@ const imageStyleTransferData: ImageStyleTransfer = {
       icon: 'LuSmile',
       gradient: 'from-yellow-500 to-red-500',
       bgColor: 'bg-yellow-50',
-      borderColor: 'border-yellow-200'
-    }
+      borderColor: 'border-yellow-200',
+    },
   ],
   fileFormats: 'Supports JPG, PNG, WebP (max 10MB)',
   processingDuration: 3000,
   progressTexts: {
     processing: 'Processing...',
-    complete: 'Complete'
-  }
-}
+    complete: 'Complete',
+  },
+};
 
 export default function ImageStyleTransferPage() {
   return (
     <div className="min-h-screen">
       <ImageStyleTransferBlock imageStyleTransfer={imageStyleTransferData} />
     </div>
-  )
+  );
 }

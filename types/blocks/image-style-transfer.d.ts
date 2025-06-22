@@ -1,58 +1,64 @@
-import {Button} from "@/types/blocks/base";
+import { Button } from '@/types/blocks/base';
 
 export interface StyleOption {
-    id: string;
-    name: string;
-    description: string;
-    icon: string;
-    gradient: string;
-    bgColor: string;
-    borderColor: string;
+  id: string;
+  code?: string;
+  name: string;
+  description: string;
+  icon: string;
+  gradient: string;
+  bgColor: string;
+  borderColor: string;
+  prompt?: string;
+  modelProvider?: string;
+  model?: string;
+  n?: number;
+  aspectRatio?: string;
 }
 
 export interface ImageStyleTransfer {
-    disabled?: boolean;
-    name?: string;
+  disabled?: boolean;
+  name?: string;
+  title?: string;
+  description?: string;
+  uploadSection?: {
     title?: string;
     description?: string;
-    uploadSection?: {
-        title?: string;
-        description?: string;
-        uploadPlaceholder?: {
-            title?: string;
-            description?: string;
-            buttonText?: string;
-        };
-        changeButtonText?: string;
+    uploadPlaceholder?: {
+      title?: string;
+      description?: string;
+      buttonText?: string;
     };
-    resultSection?: {
-        title?: string;
-        uploadFirstMessage?: {
-            title?: string;
-            description?: string;
-        };
-        processingMessage?: {
-            title?: string;
-            description?: string;
-        };
-        readyMessage?: {
-            title?: string;
-            description?: string;
-        };
-        downloadButton?: Button;
-        tryAnotherButton?: Button;
+    changeButtonText?: string;
+  };
+  resultSection?: {
+    title?: string;
+    uploadFirstMessage?: {
+      title?: string;
+      description?: string;
     };
-    styleSelection?: {
-        title?: string;
-        description?: string;
-        uploadFirstMessage?: string;
-        selectedBadgeText?: string;
+    processingMessage?: {
+      title?: string;
+      description?: string;
     };
-    styleOptions?: StyleOption[];
-    fileFormats?: string;
-    processingDuration?: number;
-    progressTexts?: {
-        processing?: string;
-        complete?: string;
+    readyMessage?: {
+      title?: string;
+      description?: string;
     };
+    downloadButton?: Button;
+    tryAnotherButton?: Button;
+  };
+  styleSelection?: {
+    title?: string;
+    description?: string;
+    uploadFirstMessage?: string;
+    selectedBadgeText?: string;
+  };
+  styleOptions?: StyleOption[];
+  fileFormats?: string;
+  processingDuration?: number;
+  progressTexts?: {
+    processing?: string;
+    complete?: string;
+  };
 }

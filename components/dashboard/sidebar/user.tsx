@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "@/i18n/routing";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Link } from '@/i18n/routing'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,36 +10,36 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger,
-  useSidebar,
-} from "@/components/ui/sidebar";
-import Icon from "@/components/icon";
+} from '@/components/ui/dropdown-menu'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger, useSidebar } from '@/components/ui/sidebar'
+import Icon from '@/components/icon'
 
-import { Button } from "@/components/ui/button";
-import { signOut } from "next-auth/react";
-import { useAppContext } from "@/contexts/app";
-import { useTranslations } from "next-intl";
-import { Account } from "@/types/blocks/base";
-import { Fragment } from "react";
+import { Button } from '@/components/ui/button'
+import { useAppContext } from '@/contexts/app'
+import { useTranslations } from 'next-intl'
+import { Account } from '@/types/blocks/base'
+import { Fragment } from 'react'
+import Cookies from 'js-cookie'
 
 export default function SidebarUser({ account }: { account?: Account }) {
-  const t = useTranslations();
+  const t = useTranslations()
 
-  const { user, setShowSignModal } = useAppContext();
-  const { isMobile, open } = useSidebar();
+  const { user, setShowSignModal, setUser } = useAppContext()
+  const { isMobile, open } = useSidebar()
+
+  const handleSignOut = () => {
+    Cookies.remove('auth_token')
+    Cookies.remove('user_info')
+    setUser(null)
+  }
 
   return (
     <>
       {user ? (
-        <SidebarMenu className="gap-4">
+        <SidebarMenu className='gap-4'>
           {!open && (
             <SidebarMenuItem>
-              <SidebarMenuButton className="cursor-pointer" asChild>
+              <SidebarMenuButton className='cursor-pointer' asChild>
                 <SidebarTrigger />
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -47,43 +47,33 @@ export default function SidebarUser({ account }: { account?: Account }) {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                >
-                  <Avatar className="h-8 w-8 rounded-lg">
+                <SidebarMenuButton size='lg' className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'>
+                  <Avatar className='h-8 w-8 rounded-lg'>
                     <AvatarImage src={user?.avatarUrl} alt={user?.nickname} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
                   </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {user.nickname}
-                    </span>
-                    <span className="truncate text-xs">{user.email}</span>
+                  <div className='grid flex-1 text-left text-sm leading-tight'>
+                    <span className='truncate font-semibold'>{user.nickname}</span>
+                    <span className='truncate text-xs'>{user.email}</span>
                   </div>
-                  <Icon name="RiExpandUpDownLine" className="ml-auto size-4" />
+                  <Icon name='RiExpandUpDownLine' className='ml-auto size-4' />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg bg-background"
-                side={isMobile ? "bottom" : "right"}
-                align="end"
+                className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg bg-background'
+                side={isMobile ? 'bottom' : 'right'}
+                align='end'
                 sideOffset={4}
               >
-                <DropdownMenuLabel className="p-0 font-normal">
-                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
-                        src={user?.avatarUrl}
-                        alt={user?.nickname}
-                      />
-                      <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <DropdownMenuLabel className='p-0 font-normal'>
+                  <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
+                    <Avatar className='h-8 w-8 rounded-lg'>
+                      <AvatarImage src={user?.avatarUrl} alt={user?.nickname} />
+                      <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
                     </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">
-                        {user?.nickname}
-                      </span>
-                      <span className="truncate text-xs">{user?.email}</span>
+                    <div className='grid flex-1 text-left text-sm leading-tight'>
+                      <span className='truncate font-semibold'>{user?.nickname}</span>
+                      <span className='truncate text-xs'>{user?.email}</span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
@@ -91,12 +81,8 @@ export default function SidebarUser({ account }: { account?: Account }) {
                 <DropdownMenuGroup>
                   {account?.items?.map((item, index) => (
                     <Fragment key={index}>
-                      <DropdownMenuItem className="cursor-pointer">
-                        <Link
-                          href={item.url as any}
-                          target={item.target}
-                          className="w-full flex items-center gap-2"
-                        >
+                      <DropdownMenuItem className='cursor-pointer'>
+                        <Link href={item.url as any} target={item.target} className='w-full flex items-center gap-2'>
                           {item.icon && <Icon name={item.icon} />}
                           {item.title}
                         </Link>
@@ -104,12 +90,9 @@ export default function SidebarUser({ account }: { account?: Account }) {
                       <DropdownMenuSeparator />
                     </Fragment>
                   ))}
-                  <DropdownMenuItem
-                    className="cursor-pointer"
-                    onClick={() => signOut()}
-                  >
-                    <Icon name="RiLogoutBoxLine" />
-                    {t("user.sign_out")}
+                  <DropdownMenuItem className='cursor-pointer' onClick={handleSignOut}>
+                    <Icon name='RiLogoutBoxLine' />
+                    {t('user.sign_out')}
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
@@ -119,15 +102,15 @@ export default function SidebarUser({ account }: { account?: Account }) {
       ) : (
         <>
           {open ? (
-            <div className="flex justify-center items-center h-full px-4 py-4">
-              <Button className="w-full" onClick={() => setShowSignModal(true)}>
-                {t("user.sign_in")}
+            <div className='flex justify-center items-center h-full px-4 py-4'>
+              <Button className='w-full' onClick={() => setShowSignModal(true)}>
+                {t('user.sign_in')}
               </Button>
             </div>
           ) : (
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton className="cursor-pointer" asChild>
+                <SidebarMenuButton className='cursor-pointer' asChild>
                   <SidebarTrigger />
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -145,5 +128,5 @@ export default function SidebarUser({ account }: { account?: Account }) {
         </>
       )}
     </>
-  );
+  )
 }

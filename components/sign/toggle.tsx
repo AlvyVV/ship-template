@@ -1,17 +1,14 @@
-"use client";
+'use client';
 
-import SignIn from "./sign_in";
-import User from "./user";
-import { useAppContext } from "@/contexts/app";
-import { useTranslations } from "next-intl";
+import { useUser } from '@/contexts/app';
+import { memo } from 'react';
+import SignIn from './sign-in';
+import User from './user';
 
-export default function SignToggle() {
-  const t = useTranslations();
-  const { user } = useAppContext();
+const SignToggle = () => {
+  const { user } = useUser();
+  console.log('SignToggle - user:', user);
+  return <div className="flex items-center gap-x-2 px-2">{user ? <User user={user} /> : <SignIn />}</div>;
+};
 
-  return (
-    <div className="flex items-center gap-x-2 px-2 cursor-pointer">
-      {user ? <User user={user} /> : <SignIn />}
-    </div>
-  );
-}
+export default memo(SignToggle);

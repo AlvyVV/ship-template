@@ -38,9 +38,9 @@
         "icon": "RiArrowRightUpLine"
       }
     ],
-    "show_sign": true,
-    "show_theme": true,
-    "show_locale": true
+    "showSign": true,
+    "showTheme": true,
+    "showLocale": true
   },
   "hero": {
     "title": "Ship Any AI Startups in hours, not days",

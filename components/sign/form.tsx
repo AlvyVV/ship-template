@@ -1,59 +1,168 @@
-"use client";
+'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import Icon from "@/components/icon";
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { SiGithub, SiGoogle } from 'react-icons/si';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { signIn } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { api } from '@/lib/api-client';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-export default function SignForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+export default function SignForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const t = useTranslations();
+  const router = useRouter();
+
+  // 添加状态以跟踪登录过程和错误
+  const [loginStatus, setLoginStatus] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  console.log('ENV:', process.env.NEXT_PUBLIC_API_BASE_URL);
+  // 动态获取当前域名的函数
+  const getCurrentDomain = (): string => {
+    if (typeof window === 'undefined') {
+      // 服务器端渲染时返回空字符串
+      return '';
+    }
+    return window.location.origin;
+  };
+
+  // 处理登录方法
+  const handleSignIn = async (provider: string) => {
+    try {
+      // 重置状态
+      setLoginStatus(`正在处理 ${provider} 登录...`);
+      setError('');
+
+      if (provider === 'google') {
+        try {
+          // 获取当前页面的路径
+          const currentPath = window.location.pathname;
+
+          // 设置获取 state 的状态信息
+          setLoginStatus('正在获取登录参数...');
+
+          // 从服务器获取 state 参数
+          const currentDomain = getCurrentDomain();
+          const stateData = await api.get(`/auth/google/state?redirectPath=${currentDomain}${encodeURIComponent(currentPath)}`);
+
+          if (stateData.status !== 'success' || !stateData.data || !stateData.data.state) {
+            throw new Error('服务器返回的 state 数据格式不正确');
+          }
+
+          const state = stateData.data.state;
+
+          // 获取环境变量
+          const googleClientId = process.env.NEXT_PUBLIC_AUTH_GOOGLE_ID;
+          const googleRedirectUri = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI;
+          console.log('googleClientId', googleClientId);
+          console.log('googleRedirectUri', googleRedirectUri);
+          // 检查必要的环境变量是否设置
+          if (!googleClientId || !googleRedirectUri) {
+            const errorMsg = 'Google OAuth 配置不完整，请检查环境变量';
+            setError(errorMsg);
+            setLoginStatus('');
+            return;
+          }
+
+          // 构建 Google OAuth URL
+          const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${encodeURIComponent(
+            googleRedirectUri
+          )}&response_type=code&scope=openid%20email%20profile&state=${encodeURIComponent(state)}`;
+
+          // 设置状态，表示即将跳转
+          setLoginStatus('正在跳转到 Google 登录页面...');
+
+          // 延迟一下，确保状态更新后再跳转
+          setTimeout(() => {
+            window.location.href = googleAuthUrl;
+          }, 100);
+        } catch (innerError) {
+          const errorMsg = `Google 登录处理失败: ${innerError instanceof Error ? innerError.message : String(innerError)}`;
+          setError(errorMsg);
+          setLoginStatus('');
+        }
+      } else if (provider === 'github') {
+        // 实现 GitHub 登录逻辑
+        try {
+          // 获取当前页面的路径
+          const currentPath = window.location.pathname;
+
+          // 设置获取 state 的状态信息
+          setLoginStatus('正在获取登录参数...');
+
+          // 从服务器获取 state 参数
+          const currentDomain = getCurrentDomain();
+          const stateData = await api.get(`/auth/github/state?redirectPath=${currentDomain}${encodeURIComponent(currentPath)}`);
+
+          if (stateData.status !== 'success' || !stateData.data || !stateData.data.state) {
+            throw new Error('服务器返回的 state 数据格式不正确');
+          }
+
+          const state = stateData.data.state;
+
+          // 获取环境变量
+          const githubClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+          const githubRedirectUri = process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI;
+
+          // 检查必要的环境变量是否设置
+          if (!githubClientId || !githubRedirectUri) {
+            const errorMsg = 'GitHub OAuth 配置不完整，请检查环境变量';
+            setError(errorMsg);
+            setLoginStatus('');
+            return;
+          }
+
+          // 构建 GitHub OAuth URL
+          const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${encodeURIComponent(githubRedirectUri)}&scope=user:email&state=${encodeURIComponent(
+            state
+          )}`;
+
+          // 设置状态，表示即将跳转
+          setLoginStatus('正在跳转到 GitHub 登录页面...');
+
+          // 延迟一下，确保状态更新后再跳转
+          setTimeout(() => {
+            window.location.href = githubAuthUrl;
+          }, 100);
+        } catch (innerError) {
+          const errorMsg = `GitHub 登录处理失败: ${innerError instanceof Error ? innerError.message : String(innerError)}`;
+          setError(errorMsg);
+          setLoginStatus('');
+        }
+      }
+    } catch (outerError) {
+      setError(`登录处理出错: ${outerError instanceof Error ? outerError.message : String(outerError)}`);
+      setLoginStatus('');
+    }
+  };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">
-            {t("sign_modal.sign_in_title")}
-          </CardTitle>
-          <CardDescription>
-            {t("sign_modal.sign_in_description")}
-          </CardDescription>
-        </CardHeader>
+        <CardHeader className="text-center"></CardHeader>
         <CardContent>
           <div className="grid gap-6">
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {loginStatus && (
+              <Alert>
+                <AlertDescription>{loginStatus}</AlertDescription>
+              </Alert>
+            )}
+
             <div className="flex flex-col gap-4">
-              {process.env.NEXT_PUBLIC_AUTH_GOOGLE_ENABLED === "true" && (
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => signIn("google")}
-                >
-                  <Icon name="SiGoogle" className="w-4 h-4" />
-                  {t("sign_modal.google_sign_in")}
-                </Button>
-              )}
-              {process.env.NEXT_PUBLIC_AUTH_GITHUB_ENABLED === "true" && (
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => signIn("github")}
-                >
-                  <Icon name="SiGithub" className="w-4 h-4" />
-                  {t("sign_modal.github_sign_in")}
+              {process.env.NEXT_PUBLIC_AUTH_GOOGLE_ENABLED === 'true' && (
+                <Button variant="outline" className="w-full" onClick={() => handleSignIn('google')}>
+                  <SiGoogle className="w-4 h-4" />
+                  {t('sign_modal.google_sign_in')}
                 </Button>
               )}
             </div>
@@ -61,27 +170,17 @@ export default function SignForm({
             {false && (
               <>
                 <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                  <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
+                  <span className="relative z-10 bg-background px-2 text-muted-foreground">Or continue with</span>
                 </div>
                 <div className="grid gap-6">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                    />
+                    <Input id="email" type="email" placeholder="m@example.com" required />
                   </div>
                   <div className="grid gap-2">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
-                      <a
-                        href="#"
-                        className="ml-auto text-sm underline-offset-4 hover:underline"
-                      >
+                      <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
                         Forgot your password?
                       </a>
                     </div>
@@ -92,7 +191,7 @@ export default function SignForm({
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  Don&apos;t have an account?{" "}
+                  Don&apos;t have an account?{' '}
                   <a href="#" className="underline underline-offset-4">
                     Sign up
                   </a>
@@ -102,12 +201,12 @@ export default function SignForm({
           </div>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary  ">
-        By clicking continue, you agree to our{" "}
+      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+        By clicking continue, you agree to our{' '}
         <a href="/terms-of-service" target="_blank">
           Terms of Service
-        </a>{" "}
-        and{" "}
+        </a>{' '}
+        and{' '}
         <a href="/privacy-policy" target="_blank">
           Privacy Policy
         </a>

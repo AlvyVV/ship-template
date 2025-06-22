@@ -1,15 +1,15 @@
 'use client'
 
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import Icon from '@/components/icon'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChatHeader } from '@/components/chat-header'
-import { getPgClient } from '@/models/db'
+import { getPgWrapperClient } from '@/models/db'
 import NodeCache from 'node-cache'
 
 const landingPageCache = new NodeCache({ stdTTL: 60 })
@@ -53,7 +53,14 @@ async function loadPageContent<T>(locale: string, namespace: string): Promise<T>
   }
 
   try {
-    const result = await getPgClient().from('page_configs').select('content').eq('locale', locale).eq('code', namespace).eq('project_id', process.env.PROJECT_ID).eq('is_deleted', false).single()
+    const result = await getPgWrapperClient()
+      .from('page_configs')
+      .select('content')
+      .eq('locale', locale)
+      .eq('code', namespace)
+      .eq('project_id', process.env.PROJECT_ID)
+      .eq('is_deleted', false)
+      .single()
 
     if (result.data?.content) {
       const content = result.data.content as T
@@ -95,14 +102,36 @@ export default function Chat({ chat }: ChatProps) {
     return null
   }
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat()
+  const { messages, sendMessage, status, setMessages } = useChat({
+    maxSteps: 5,
+  })
+
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+
+  const [input, setInput] = useState('')
+
+  const isLoading = status === 'submitted' || status === 'streaming'
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(event.target.value)
+  }
+
+  const handleSubmit = async (event?: React.FormEvent) => {
+    event?.preventDefault()
+    const trimmed = input.trim()
+    if (!trimmed) return
+
+    await sendMessage({
+      role: 'user',
+      parts: [{ type: 'text', text: trimmed }],
+    })
+    setInput('')
+  }
 
   const handleNewChat = () => {
     setMessages([])
   }
 
-  // 自动滚动到底部
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]')
@@ -128,7 +157,17 @@ export default function Chat({ chat }: ChatProps) {
               {chat.suggestions && chat.suggestions.length > 0 && (
                 <div className='mt-6 flex flex-wrap gap-2 justify-center'>
                   {chat.suggestions.map((suggestion, index) => (
-                    <Button key={index} variant='outline' size='sm' onClick={() => handleSubmit(new Event('submit') as any, { data: new FormData() })}>
+                    <Button
+                      key={index}
+                      variant='outline'
+                      size='sm'
+                      onClick={() =>
+                        sendMessage({
+                          role: 'user',
+                          parts: [{ type: 'text', text: suggestion.text }],
+                        })
+                      }
+                    >
                       {suggestion.emoji} {suggestion.text}
                     </Button>
                   ))}
@@ -148,7 +187,7 @@ export default function Chat({ chat }: ChatProps) {
               )}
 
               <Card className='max-w-[85%] sm:max-w-[70%]'>
-                <div className='whitespace-pre-wrap'>{message.content}</div>
+                <div className='whitespace-pre-wrap'>{message.parts?.map((part, index) => (part.type === 'text' ? <span key={index}>{part.text}</span> : null))}</div>
               </Card>
 
               {message.role === 'user' && (

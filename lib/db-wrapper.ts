@@ -11,7 +11,7 @@ function toCamelCase(str: string): string {
 
 // 将 camelCase 转换为 snake_case
 function toSnakeCase(str: string): string {
-  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 }
 
 // 转换对象的键从 snake_case 到 camelCase
@@ -19,11 +19,11 @@ function convertKeysToCamelCase(obj: any): any {
   if (obj === null || obj === undefined) {
     return obj;
   }
-  
+
   if (Array.isArray(obj)) {
     return obj.map(convertKeysToCamelCase);
   }
-  
+
   if (typeof obj === 'object' && obj.constructor === Object) {
     const converted: any = {};
     for (const [key, value] of Object.entries(obj)) {
@@ -32,7 +32,7 @@ function convertKeysToCamelCase(obj: any): any {
     }
     return converted;
   }
-  
+
   return obj;
 }
 
@@ -41,11 +41,11 @@ function convertKeysToSnakeCase(obj: any): any {
   if (obj === null || obj === undefined) {
     return obj;
   }
-  
+
   if (Array.isArray(obj)) {
     return obj.map(convertKeysToSnakeCase);
   }
-  
+
   if (typeof obj === 'object' && obj.constructor === Object) {
     const converted: any = {};
     for (const [key, value] of Object.entries(obj)) {
@@ -54,7 +54,7 @@ function convertKeysToSnakeCase(obj: any): any {
     }
     return converted;
   }
-  
+
   return obj;
 }
 
@@ -66,7 +66,7 @@ class WrappedQueryBuilder {
     this.builder = builder;
   }
 
-  select(columns?: string, options?: { count?: "exact" | "planned" | "estimated", head?: boolean }) {
+  select(columns?: string, options?: { count?: 'exact' | 'planned' | 'estimated'; head?: boolean }) {
     return new WrappedQueryBuilder(this.builder.select(columns, options));
   }
 
@@ -145,15 +145,12 @@ class WrappedQueryBuilder {
     onfulfilled?: ((value: any) => TResult1 | PromiseLike<TResult1>) | undefined | null,
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null
   ): Promise<TResult1 | TResult2> {
-    return this.builder.then(
-      (result: any) => {
-        if (result.data) {
-          result.data = convertKeysToCamelCase(result.data);
-        }
-        return onfulfilled ? onfulfilled(result) : result;
-      },
-      onrejected
-    );
+    return this.builder.then((result: any) => {
+      if (result.data) {
+        result.data = convertKeysToCamelCase(result.data);
+      }
+      return onfulfilled ? onfulfilled(result) : result;
+    }, onrejected);
   }
 }
 
@@ -167,10 +164,10 @@ class WrappedSupabaseClient {
 
   from(table: string) {
     return {
-      select: (columns?: string, options?: { count?: "exact" | "planned" | "estimated", head?: boolean }) => {
+      select: (columns?: string, options?: { count?: 'exact' | 'planned' | 'estimated'; head?: boolean }) => {
         return new WrappedQueryBuilder(this.client.from(table).select(columns, options));
       },
-      
+
       insert: async (values: any | any[]) => {
         const snakeValues = convertKeysToSnakeCase(values);
         const result = await this.client.from(table).insert(snakeValues);
@@ -179,12 +176,12 @@ class WrappedSupabaseClient {
         }
         return result;
       },
-      
+
       update: (values: any) => {
         const snakeValues = convertKeysToSnakeCase(values);
         return new WrappedUpdateBuilder(this.client.from(table).update(snakeValues));
       },
-      
+
       upsert: async (values: any | any[]) => {
         const snakeValues = convertKeysToSnakeCase(values);
         const result = await this.client.from(table).upsert(snakeValues);
@@ -193,10 +190,10 @@ class WrappedSupabaseClient {
         }
         return result;
       },
-      
+
       delete: () => {
         return new WrappedDeleteBuilder(this.client.from(table).delete());
-      }
+      },
     };
   }
 }
@@ -258,15 +255,12 @@ class WrappedUpdateBuilder {
     onfulfilled?: ((value: any) => TResult1 | PromiseLike<TResult1>) | undefined | null,
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null
   ): Promise<TResult1 | TResult2> {
-    return this.builder.then(
-      (result: any) => {
-        if (result.data) {
-          result.data = convertKeysToCamelCase(result.data);
-        }
-        return onfulfilled ? onfulfilled(result) : result;
-      },
-      onrejected
-    );
+    return this.builder.then((result: any) => {
+      if (result.data) {
+        result.data = convertKeysToCamelCase(result.data);
+      }
+      return onfulfilled ? onfulfilled(result) : result;
+    }, onrejected);
   }
 }
 
@@ -327,30 +321,16 @@ class WrappedDeleteBuilder {
     onfulfilled?: ((value: any) => TResult1 | PromiseLike<TResult1>) | undefined | null,
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null
   ): Promise<TResult1 | TResult2> {
-    return this.builder.then(
-      (result: any) => {
-        if (result.data) {
-          result.data = convertKeysToCamelCase(result.data);
-        }
-        return onfulfilled ? onfulfilled(result) : result;
-      },
-      onrejected
-    );
+    return this.builder.then((result: any) => {
+      if (result.data) {
+        result.data = convertKeysToCamelCase(result.data);
+      }
+      return onfulfilled ? onfulfilled(result) : result;
+    }, onrejected);
   }
 }
 
 export function getPgWrapperClient() {
-  const supabaseUrl = process.env.SUPABASE_URL || "";
-
-  let supabaseKey = process.env.SUPABASE_ANON_KEY || "";
-  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  }
-
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Supabase URL or key is not set");
-  }
-
   const client = getPgClient();
   return new WrappedSupabaseClient(client);
 }

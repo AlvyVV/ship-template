@@ -1,11 +1,11 @@
-import { streamText } from "ai"
-import { xai } from "@ai-sdk/xai"
+import { streamText } from 'ai'
+import { xai } from '@ai-sdk/xai'
 
 export async function POST(req: Request) {
   const { messages } = await req.json()
 
   const result = streamText({
-    model: xai("grok-3"),
+    model: xai('grok-3'),
     system: `你是 Grok，一个由 xAI 开发的AI助手。请用中文回答问题，保持友好、幽默和专业的语气。
 
   回答时请注意：
@@ -17,5 +17,5 @@ export async function POST(req: Request) {
     messages,
   })
 
-  return result.toDataStreamResponse()
+  return result.toTextStreamResponse()
 }
