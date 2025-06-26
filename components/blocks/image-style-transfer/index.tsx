@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { uploadFile } from '@/lib/upload-file';
 import { apiClient } from '@/lib/api-client';
 import { useUser, useModal } from '@/contexts/app';
+import { useServerEvents, ServerEvent } from '@/hooks/use-server-events';
 
 export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageStyleTransfer: ImageStyleTransfer }) {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -29,6 +30,11 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
   const [pendingGenerate, setPendingGenerate] = useState<boolean>(false);
   const { user } = useUser();
   const { setShowSignModal } = useModal();
+
+  /* === SSE 订阅处理 === */
+  const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+  const sseUrl = `${apiBase}/events/stream`;
+  const { events: sseEvents } = useServerEvents(sseUrl);
 
   if (imageStyleTransfer.disabled) {
     return null;
@@ -131,6 +137,30 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  // 监听 SSE 事件，匹配当前 taskId
+  useEffect(() => {
+    if (!taskId) return;
+
+    const matched = sseEvents.find((e: ServerEvent) => (e.type === 'user.media.record.completed' || e.type === 'user.media.record.failed') && e.transactionNo === taskId);
+
+    if (!matched) return;
+
+    // 根据事件类型处理
+    if (matched.type === 'user.media.record.completed') {
+      if (matched.url) {
+        setProcessedImage(matched.url);
+      }
+      setIsProcessing(false);
+      setProgress(100);
+    }
+
+    if (matched.type === 'user.media.record.failed') {
+      setIsProcessing(false);
+      setProgress(0);
+      // 可以弹出错误提示，或设置错误状态
+    }
+  }, [sseEvents, taskId]);
 
   const handleDownload = () => {
     if (processedImage) {
