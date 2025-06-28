@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 export interface ServerEvent {
   type: string;
@@ -16,11 +16,34 @@ export function useServerEvents(url: string) {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 在首次渲染时确定 clientId
+  const clientId = useMemo(() => {
+    if (typeof window === 'undefined') return '';
+    const storageKey = 'sseClientId';
+    let id = localStorage.getItem(storageKey);
+    if (!id) {
+      if (crypto?.randomUUID) {
+        id = crypto.randomUUID();
+      } else {
+        id = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+      }
+      localStorage.setItem(storageKey, id);
+    }
+    return id;
+  }, []);
+
+  // 带 clientId 的完整 SSE 地址
+  const urlWithId = useMemo(() => {
+    if (typeof window === 'undefined') return url;
+    const hasQuery = url.includes('?');
+    return `${url}${hasQuery ? '&' : '?'}clientId=${clientId}`;
+  }, [url, clientId]);
+
   useEffect(() => {
     // EventSource 仅在浏览器环境可用
     if (typeof window === 'undefined') return;
 
-    const eventSource = new EventSource(url);
+    const eventSource = new EventSource(urlWithId);
 
     eventSource.onopen = () => {
       setIsConnected(true);
@@ -48,7 +71,7 @@ export function useServerEvents(url: string) {
       eventSource.close();
       setIsConnected(false);
     };
-  }, [url]);
+  }, [urlWithId]);
 
-  return { events, isConnected, error } as const;
+  return { events, isConnected, error, clientId } as const;
 }

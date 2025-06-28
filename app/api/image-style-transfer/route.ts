@@ -1,7 +1,7 @@
 import { respData, respErr } from '@/lib/resp';
 import { getPgWrapperClient } from '@/lib/db-wrapper';
 import { headers } from 'next/headers';
-import { date } from 'zod';
+import { apiClient } from '@/lib/api-client';
 
 export async function POST(req: Request) {
   try {
@@ -54,22 +54,9 @@ export async function POST(req: Request) {
     }
 
     // 6. 调用外部接口
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/user-media-records`;
-
-    const remoteResp = await fetch(apiUrl, {
-      method: 'POST',
+    return await apiClient.post('/user-media-records', payload, {
       headers: requestHeaders,
-      body: JSON.stringify(payload),
     });
-
-    const remoteData = await remoteResp.json().catch(() => null);
-
-    if (!remoteResp.ok) {
-      const msg = remoteData?.message || 'remote error';
-      return respErr(msg);
-    }
-
-    return respData(remoteData);
   } catch (e) {
     console.error('image-style-transfer error: ', e);
     return respErr('internal error');
