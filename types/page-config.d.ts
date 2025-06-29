@@ -1,5 +1,4 @@
 export interface PageConfig {
-  id: number;
   code: string;
   locale: string;
   title: string;

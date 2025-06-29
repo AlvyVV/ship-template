@@ -1,19 +1,14 @@
 import { Button } from '@/types/blocks/base';
 
 export interface StyleOption {
-  id: string;
-  code?: string;
+  /** 样式唯一编码 */
+  code: string;
+  /** 样式名称 */
   name: string;
+  /** 样式描述 */
   description: string;
-  icon: string;
-  gradient: string;
-  bgColor: string;
-  borderColor: string;
-  prompt?: string;
-  modelProvider?: string;
-  model?: string;
-  n?: number;
-  aspectRatio?: string;
+  /** 示例图片 URL，用于列表展示 */
+  demoImageUrl: string;
 }
 
 export interface ImageStyleTransfer {

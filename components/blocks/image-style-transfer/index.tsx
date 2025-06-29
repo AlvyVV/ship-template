@@ -83,7 +83,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
     if (!uploadedImage || !imageUrl || !selectedStyle) return;
 
     try {
-      const selectedStyleData = imageStyleTransfer.styleOptions?.find(s => s.id === selectedStyle);
+      const selectedStyleData = imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle);
       const code = selectedStyleData?.code || selectedStyle;
       const resp = await apiClient.post<{ taskId: string }>('/api/image-style-transfer', {
         code,
@@ -109,7 +109,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
     }, 200);
 
     setTimeout(() => {
-      const selectedStyleData = imageStyleTransfer.styleOptions?.find(s => s.id === selectedStyle);
+      const selectedStyleData = imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle);
       setProcessedImage(`/placeholder.svg?height=500&width=500&query=${selectedStyleData?.name} style processed image`);
       setIsProcessing(false);
       setProgress(0);
@@ -326,7 +326,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                           <p className="text-sm text-muted-foreground">{imageStyleTransfer.resultSection?.readyMessage?.description}</p>
                           {selectedStyle && (
                             <Badge className="mt-2 bg-purple-600">
-                              {imageStyleTransfer.styleOptions?.find(s => s.id === selectedStyle)?.name} {imageStyleTransfer.styleSelection?.selectedBadgeText}
+                              {imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle)?.name} {imageStyleTransfer.styleSelection?.selectedBadgeText}
                             </Badge>
                           )}
                         </div>
@@ -353,22 +353,20 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
               {imageStyleTransfer.styleOptions?.map(style => {
                 return (
                   <Card
-                    key={style.id}
+                    key={style.code}
                     className={cn(
-                      'cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg relative overflow-hidden',
-                      style.bgColor,
-                      style.borderColor,
-                      'border-2',
-                      selectedStyle === style.id && 'ring-2 ring-purple-500 ring-offset-2 scale-105',
+                      'cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg relative overflow-hidden border-2',
+                      selectedStyle === style.code && 'ring-2 ring-purple-500 ring-offset-2 scale-105',
                       !uploadedImage && 'opacity-75',
-                      !uploadedImage && selectedStyle === style.id && 'opacity-100'
+                      !uploadedImage && selectedStyle === style.code && 'opacity-100'
                     )}
-                    onClick={() => handleStyleSelect(style.id)}
+                    onClick={() => handleStyleSelect(style.code)}
                   >
                     <CardContent className="p-4">
                       <div className="space-y-3">
-                        <div className={cn('relative w-full h-20 rounded-md overflow-hidden bg-gradient-to-br', style.gradient, 'flex items-center justify-center')}>
-                          <Icon name={style.icon} className="h-8 w-8 text-white drop-shadow-lg" />
+                        {/* 示例图片 */}
+                        <div className="relative w-full h-24 rounded-md overflow-hidden bg-muted">
+                          <Image src={style.demoImageUrl} alt={style.name} fill className="object-cover" />
                         </div>
 
                         <div className="text-center">
@@ -376,7 +374,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                           <p className="text-xs text-muted-foreground mt-1">{style.description}</p>
                         </div>
 
-                        {selectedStyle === style.id && <Badge className="w-full justify-center bg-purple-600 text-white">{imageStyleTransfer.styleSelection?.selectedBadgeText}</Badge>}
+                        {selectedStyle === style.code && <Badge className="w-full justify-center bg-purple-600 text-white">{imageStyleTransfer.styleSelection?.selectedBadgeText}</Badge>}
 
                         {!uploadedImage && (
                           <Badge variant="outline" className="w-full justify-center text-xs opacity-60">
