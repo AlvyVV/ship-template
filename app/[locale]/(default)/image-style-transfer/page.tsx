@@ -5,7 +5,6 @@ import { getLocale } from 'next-intl/server';
 
 export default async function ImageStyleTransferPage() {
   const locale = await getLocale();
-  // Debug: print locale on server side
   console.log('locale', locale);
   const imageStyleTransferData = await getPage<ImageStyleTransfer>(locale, 'image-style-transfer');
 

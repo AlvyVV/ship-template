@@ -14,6 +14,7 @@ import { uploadFile } from '@/lib/upload-file';
 import { apiClient } from '@/lib/api-client';
 import { useUser, useModal } from '@/contexts/app';
 import { useServerEvents, ServerEvent } from '@/hooks/use-server-events';
+import { getProgress } from '@/lib/progress';
 
 export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageStyleTransfer: ImageStyleTransfer }) {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -21,6 +22,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
   const [processedImage, setProcessedImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [exeTime, setExeTime] = useState<number | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const leftContainerRef = useRef<HTMLDivElement>(null);
   const [leftHeight, setLeftHeight] = useState<number | null>(null);
@@ -85,35 +87,39 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
     try {
       const selectedStyleData = imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle);
       const code = selectedStyleData?.code || selectedStyle;
-      const resp = await apiClient.post<{ taskId: string }>('/api/image-style-transfer', {
+      // 接口返回格式：{ code: 0, message: 'ok', data: { userMediaRecordId, exeTime, ... } }
+      const resp = await apiClient.post<{
+        code: number;
+        message: string;
+        data: {
+          userMediaRecordId: string;
+          exeTime: number;
+        };
+      }>('/api/image-style-transfer', {
         code,
         imageUrl,
       });
-      setTaskId(resp.taskId);
+
+      // 解析实际业务数据
+      const { userMediaRecordId, exeTime } = resp.data || ({} as any);
+
+      // 保存任务信息，供后续进度轮询和 SSE 事件匹配使用
+      if (userMediaRecordId) {
+        setTaskId(userMediaRecordId);
+      }
+
+      if (exeTime !== undefined) {
+        setExeTime(exeTime);
+      }
+
+      console.log('resp', resp);
     } catch (e) {
       console.error('创建任务失败', e);
     }
 
-    // 前端模拟处理流程
+    // 开始处理流程，进度条由 getProgress 估算，最终以 SSE 结果为准
     setIsProcessing(true);
     setProgress(0);
-
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 200);
-
-    setTimeout(() => {
-      const selectedStyleData = imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle);
-      setProcessedImage(`/placeholder.svg?height=500&width=500&query=${selectedStyleData?.name} style processed image`);
-      setIsProcessing(false);
-      setProgress(0);
-    }, imageStyleTransfer.processingDuration || 2000);
   };
 
   const handleGenerate = async () => {
@@ -142,22 +148,46 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
   useEffect(() => {
     if (!taskId) return;
 
-    const matched = sseEvents.find((e: ServerEvent) => (e.type === 'user.media.record.completed' || e.type === 'user.media.record.failed') && e.transactionNo === taskId);
+    const matched = sseEvents.find((e: ServerEvent) => {
+      if (e.type !== 'user.media.record.completed' && e.type !== 'user.media.record.failed') return false;
+      // 后端可能使用不同字段名：transactionNo / userMediaRecordId / taskId
+      return e.transactionNo === taskId || e.userMediaRecordId === taskId || e.taskId === taskId;
+    });
 
     if (!matched) return;
 
     // 根据事件类型处理
     if (matched.type === 'user.media.record.completed') {
-      if (matched.url) {
-        setProcessedImage(matched.url);
+      let finalUrl: string | undefined;
+      if (Array.isArray(matched.resultUrls) && matched.resultUrls.length) {
+        finalUrl = matched.resultUrls[0];
+      } else if (Array.isArray(matched.urls) && matched.urls.length) {
+        // 兼容旧字段
+        finalUrl = matched.urls[0];
+      } else if (matched.url) {
+        finalUrl = matched.url;
       }
+
+      if (finalUrl) {
+        setProcessedImage(finalUrl);
+      }
+
       setIsProcessing(false);
       setProgress(100);
+      // 清理进度定时器
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current);
+        progressTimerRef.current = null;
+      }
     }
 
     if (matched.type === 'user.media.record.failed') {
       setIsProcessing(false);
       setProgress(0);
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current);
+        progressTimerRef.current = null;
+      }
       // 可以弹出错误提示，或设置错误状态
     }
   }, [sseEvents, taskId]);
@@ -179,6 +209,34 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
       setLeftHeight(leftContainerRef.current.offsetHeight);
     }
   }, [uploadedImage]);
+
+  /**
+   * 根据任务 ID 周期性调用 getProgress 计算预估进度。
+   * 当 isProcessing 为 true 且 taskId 存在时启动；结束时自动清理。
+   */
+  const progressTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // 启动进度定时器
+    if (isProcessing && taskId) {
+      // 如果之前已经存在定时器，先清理
+      if (progressTimerRef.current) clearInterval(progressTimerRef.current);
+
+      const expectedSeconds = exeTime && exeTime > 0 ? exeTime : (imageStyleTransfer.processingDuration || 30000) / 1000;
+      progressTimerRef.current = setInterval(() => {
+        setProgress(prev => getProgress(expectedSeconds, taskId, prev));
+      }, 1000);
+    }
+
+    // 组件卸载或状态改变时清理定时器
+    return () => {
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current);
+        progressTimerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isProcessing, taskId]);
 
   return (
     <section id={imageStyleTransfer.name} className="w-full py-16 bg-gradient-to-br from-slate-50 to-slate-100">

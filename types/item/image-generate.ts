@@ -4,4 +4,7 @@ export interface ItemGenerate {
   model?: string;
   n?: number;
   aspectRatio?: string;
+  exeTime?: number;
+  urls?: string[];
+  prompt?: string;
 }

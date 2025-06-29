@@ -8,13 +8,40 @@ interface ExtendedRequestInit extends RequestInit {
 }
 
 class ApiClient {
-  private baseUrl: string;
+  /**
+   * Lazily-resolved base URL. It is determined on the first real API call (or when the env changes
+   * during HMR) instead of being fixed at class construction. This avoids the "baseUrl = ''" issue
+   * when the module is instantiated before NEXT_PUBLIC_API_BASE_URL is actually defined.
+   */
+  private cachedBaseUrl: string | null = null;
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-    if (!this.baseUrl) {
-      console.warn('NEXT_PUBLIC_API_BASE_URL is not set');
+    // No eager resolution here; defer to resolveBaseUrl when actually needed.
+    if (!process.env.NEXT_PUBLIC_API_BASE_URL && process.env.NODE_ENV === 'development') {
+      console.warn('[api-client] NEXT_PUBLIC_API_BASE_URL is not defined at construct time; will fall back to http://localhost:8080 when requests are made.');
     }
+  }
+
+  /**
+   * Resolve (or re-resolve) the effective base URL.
+   * – Reads `process.env.NEXT_PUBLIC_API_BASE_URL` each time (important for HMR in dev mode)
+   * – Falls back to `http://localhost:8080` when absent
+   * – Removes trailing slash for predictable concatenation
+   */
+  private resolveBaseUrl(): string {
+    const envBaseUrl = (process.env.NEXT_PUBLIC_API_BASE_URL || '').trim();
+    const resolved = (envBaseUrl || 'http://localhost:8080').replace(/\/$/, '');
+
+    // Update cache if changed or first time.
+    if (this.cachedBaseUrl !== resolved) {
+      this.cachedBaseUrl = resolved;
+
+      if (process.env.NODE_ENV === 'development') {
+        console.info('[api-client] Using API base URL:', this.cachedBaseUrl);
+      }
+    }
+
+    return this.cachedBaseUrl;
   }
 
   /**
@@ -95,9 +122,9 @@ class ApiClient {
       return endpoint;
     }
 
-    // For external API calls, use base URL
+    // For external API calls, use lazily-resolved base URL
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-    return `${this.baseUrl}${cleanEndpoint}`;
+    return `${this.resolveBaseUrl()}${cleanEndpoint}`;
   }
 
   /**
