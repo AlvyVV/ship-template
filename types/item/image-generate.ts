@@ -6,5 +6,6 @@ export interface ItemGenerate {
   aspectRatio?: string;
   exeTime?: number;
   urls?: string[];
+  promptCode?: string;
   prompt?: string;
 }

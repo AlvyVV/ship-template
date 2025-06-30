@@ -7,7 +7,7 @@ import { ItemGenerate } from '@/types/item/image-generate';
 export async function POST(req: Request) {
   try {
     // 1. 解析请求参数
-    const { code, imageUrl, userId, aspectRatio, n } = await req.json();
+    const { code, imageUrl, userId, aspectRatio, n, params } = await req.json();
     if (!code || !imageUrl) {
       return respErr('invalid params');
     }
@@ -28,15 +28,24 @@ export async function POST(req: Request) {
         return respErr('invalid content format');
       }
     }
-    console.log('configData', configData);
-    const { data: promptData, error: promptError } = await pgClient.from('prompts').select('prompt').eq('code', configData.code).eq('is_deleted', false).single();
+    console.log('content.promptCode', content.promptCode);
+    const { data: promptData, error: promptError } = await pgClient.from('prompts').select('prompt').eq('code', content.promptCode).eq('is_deleted', false).single();
     if (promptError || !promptData?.prompt) {
       console.error('prompt not found', promptError, promptData);
       return respErr('prompt not found');
     }
 
+    console.log('params', params);
+    let prompt = promptData.prompt;
+    console.log('prompt', prompt);
+    //将params 替换到 prompt 中
+    for (const param of params) {
+      prompt = prompt.replace(`{{${param.code}}}`, param.value);
+    }
+
+    console.log('prompt', prompt);
     content.urls = [imageUrl];
-    content.prompt = promptData.prompt;
+    content.prompt = prompt;
     content.aspectRatio = aspectRatio;
     content.n = n;
 
@@ -50,6 +59,7 @@ export async function POST(req: Request) {
       oriMeta: content,
     };
 
+    console.log('payload', payload);
     // 5. 构造请求头，透传 Authorization（若有）
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -66,10 +76,9 @@ export async function POST(req: Request) {
       headers: requestHeaders,
     });
 
-    // 将返回结果扁平化，去掉多余的 data 嵌套，同时保留 status 字段
+    // 仅返回前端页面需要的字段，避免暴露多余信息
     const res = {
-      status: resData?.status,
-      ...resData?.data,
+      userMediaRecordId: resData?.data?.userMediaRecordId,
       exeTime: content.exeTime,
     };
 

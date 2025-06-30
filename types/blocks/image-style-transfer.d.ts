@@ -9,6 +9,10 @@ export interface StyleOption {
   description: string;
   /** 示例图片 URL，用于列表展示 */
   demoImageUrl: string;
+  /**
+   * 参数列表 用于替换
+   */
+  params?: [{ title: string; code: string; description: string; value: string }];
 }
 
 export interface ImageStyleTransfer {

@@ -15,6 +15,10 @@ import { apiClient } from '@/lib/api-client';
 import { useUser, useModal } from '@/contexts/app';
 import { useServerEvents, ServerEvent } from '@/hooks/use-server-events';
 import { getProgress } from '@/lib/progress';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import Loader from '@/components/ui/loader';
 
 export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageStyleTransfer: ImageStyleTransfer }) {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -32,11 +36,17 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
   const [pendingGenerate, setPendingGenerate] = useState<boolean>(false);
   const { user } = useUser();
   const { setShowSignModal } = useModal();
+  // 图片上传状态，用于显示遮罩和禁用交互
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   /* === SSE 订阅处理 === */
   const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
   const sseUrl = `${apiBase}/events/stream`;
   const { events: sseEvents } = useServerEvents(sseUrl);
+
+  /* === 额外：参数输入对话框相关状态 === */
+  const [showParamDialog, setShowParamDialog] = useState(false);
+  const [paramValues, setParamValues] = useState<Record<string, string>>({});
 
   if (imageStyleTransfer.disabled) {
     return null;
@@ -50,13 +60,18 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
     setUploadedImage(previewUrl);
     setProcessedImage(null);
 
-    // 调用后端上传
+    // 开始上传，显示遮罩
+    setIsUploading(true);
+
     try {
       const remote = await uploadFile(file);
       console.log('remote', remote);
       setImageUrl(remote.url);
     } catch (err) {
       console.error('文件上传失败', err);
+    } finally {
+      // 无论成功失败，都移除遮罩
+      setIsUploading(false);
     }
   }, []);
 
@@ -64,6 +79,10 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
     const file = event.target.files?.[0];
     if (file) {
       handleFileSelect(file);
+      // 关键：上传完立即清空 input 的 value，确保下次选择同一文件也能触发 change
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -73,9 +92,48 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
     setSelectedStyle(null);
     setImageUrl(null);
     setTaskId(null);
+
+    // 同时清空 file input，以便用户可重新选择同一文件
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  /**
+   * 打开生成确认/参数填写弹框
+   * 1. 确保当前选中风格为 styleId
+   * 2. 初始化 paramValues（有参则取默认值，无参则设为空）
+   * 3. 显示对话框
+   */
+  const handleOpenGenerateDialog = (styleId: string) => {
+    if (isUploading) return; // 上传中禁止操作
+
+    // 若切换风格同时重置部分状态
+    if (selectedStyle !== styleId) {
+      setSelectedStyle(styleId);
+      setProcessedImage(null);
+      setTaskId(null);
+    }
+
+    const selectedStyleData = imageStyleTransfer.styleOptions?.find(s => s.code === styleId);
+    const paramsList = selectedStyleData?.params as { title: string; code: string; description: string; value: string }[] | undefined;
+
+    if (paramsList && paramsList.length > 0) {
+      const initial: Record<string, string> = {};
+      paramsList.forEach(p => {
+        initial[p.code] = p.value ?? '';
+      });
+      setParamValues(initial);
+    } else {
+      setParamValues({});
+    }
+
+    setShowParamDialog(true);
   };
 
   const handleStyleSelect = (styleId: string) => {
+    if (isUploading) return; // 上传过程中禁止选择风格
+
     setSelectedStyle(styleId);
     setProcessedImage(null);
     setTaskId(null);
@@ -88,6 +146,15 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
       const selectedStyleData = imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle);
       const code = selectedStyleData?.code || selectedStyle;
       // 接口返回格式：{ code: 0, message: 'ok', data: { userMediaRecordId, exeTime, ... } }
+      const payload: any = {
+        code,
+        imageUrl,
+      };
+
+      if (paramValues && Object.keys(paramValues).length > 0) {
+        payload.params = Object.entries(paramValues).map(([code, value]) => ({ code, value }));
+      }
+
       const resp = await apiClient.post<{
         code: number;
         message: string;
@@ -95,10 +162,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
           userMediaRecordId: string;
           exeTime: number;
         };
-      }>('/api/image-style-transfer', {
-        code,
-        imageUrl,
-      });
+      }>('/api/image-style-transfer', payload);
 
       // 解析实际业务数据
       const { userMediaRecordId, exeTime } = resp.data || ({} as any);
@@ -192,14 +256,31 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
     }
   }, [sseEvents, taskId]);
 
-  const handleDownload = () => {
-    if (processedImage) {
+  /**
+   * 下载处理结果图片，避免页面跳转：
+   * 先抓取远程图片为 blob，再生成本地 ObjectURL 触发下载。
+   * 若跨域受限或失败，则回退打开新标签页。
+   */
+  const handleDownload = async () => {
+    if (!processedImage) return;
+
+    try {
+      const res = await fetch(processedImage, { mode: 'cors' });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
       const link = document.createElement('a');
-      link.href = processedImage;
-      link.download = `styled-image-${selectedStyle}.jpg`;
+      link.href = url;
+      link.download = `styled-image-${selectedStyle || 'image'}.jpg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      // 释放 URL
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download failed, open in new tab as fallback', err);
+      window.open(processedImage, '_blank');
     }
   };
 
@@ -244,8 +325,8 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2">
-            <Icon name="LuSparkles" className="h-8 w-8 text-purple-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{imageStyleTransfer.title}</h1>
+            <Icon name="LuSparkles" className="h-8 w-8 text-primary" />
+            <h1 className="text-4xl font-bold text-primary">{imageStyleTransfer.title}</h1>
           </div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{imageStyleTransfer.description}</p>
         </div>
@@ -266,7 +347,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                 <h3 className="text-lg font-semibold text-center">{imageStyleTransfer.uploadSection?.title}</h3>
                 {!uploadedImage ? (
                   <Card
-                    className={cn('border-dashed border-2 border-muted-foreground/25 h-96 transition-all duration-150', isDragOver && 'ring-2 ring-purple-500/50 scale-105')}
+                    className={cn('border-dashed border-2 border-muted-foreground/25 h-96 transition-all duration-150', isDragOver && 'ring-2 ring-primary/50 scale-105')}
                     onDragOver={e => {
                       e.preventDefault();
                       setIsDragOver(true);
@@ -288,7 +369,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                           <h4 className="font-semibold">{imageStyleTransfer.uploadSection?.uploadPlaceholder?.title}</h4>
                           <p className="text-sm text-muted-foreground">{imageStyleTransfer.fileFormats}</p>
                         </div>
-                        <Button onClick={() => fileInputRef.current?.click()} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                        <Button onClick={() => fileInputRef.current?.click()}>
                           <Icon name="LuImage" className="mr-2 h-4 w-4" />
                           {imageStyleTransfer.uploadSection?.uploadPlaceholder?.buttonText}
                         </Button>
@@ -298,10 +379,28 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                 ) : (
                   <div className="space-y-4">
                     <div ref={leftContainerRef} className="relative w-full rounded-lg overflow-hidden border">
+                      {/* 上传中遮罩，仅覆盖图片区域 */}
+                      {isUploading && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-20">
+                          <Loader />
+                        </div>
+                      )}
                       <button onClick={handleRemoveImage} className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white p-1 rounded-full z-10">
                         <Icon name="LuX" className="h-4 w-4" />
                       </button>
-                      <Image src={uploadedImage || '/placeholder.svg'} alt="Original image" width={800} height={600} className="w-full h-auto object-contain" />
+                      <Image
+                        src={uploadedImage || '/placeholder.svg'}
+                        alt="Original image"
+                        width={800}
+                        height={600}
+                        className="w-full h-auto object-contain"
+                        onLoad={() => {
+                          // 图片加载完成后，根据实际渲染高度同步右侧区域高度
+                          if (leftContainerRef.current) {
+                            setLeftHeight(leftContainerRef.current.offsetHeight);
+                          }
+                        }}
+                      />
                     </div>
                     <div className="flex justify-center">
                       <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
@@ -333,8 +432,8 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                   <Card className="h-full">
                     <CardContent className="h-full flex items-center justify-center p-8">
                       <div className="text-center space-y-4">
-                        <div className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
-                          <Icon name="LuSparkles" className="h-8 w-8 text-purple-600 animate-spin" />
+                        <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
+                          <Icon name="LuSparkles" className="h-8 w-8 text-primary animate-spin" />
                         </div>
                         <div>
                           <h4 className="font-semibold">{imageStyleTransfer.resultSection?.processingMessage?.title}</h4>
@@ -365,7 +464,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                       >
                         {imageStyleTransfer.resultSection?.tryAnotherButton?.title}
                       </Button>
-                      <Button onClick={handleDownload} className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
+                      <Button onClick={handleDownload}>
                         <Icon name="LuDownload" className="mr-2 h-4 w-4" />
                         {imageStyleTransfer.resultSection?.downloadButton?.title}
                       </Button>
@@ -383,7 +482,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                           <h4 className="font-semibold">{imageStyleTransfer.resultSection?.readyMessage?.title}</h4>
                           <p className="text-sm text-muted-foreground">{imageStyleTransfer.resultSection?.readyMessage?.description}</p>
                           {selectedStyle && (
-                            <Badge className="mt-2 bg-purple-600">
+                            <Badge className="mt-2">
                               {imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle)?.name} {imageStyleTransfer.styleSelection?.selectedBadgeText}
                             </Badge>
                           )}
@@ -414,9 +513,10 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                     key={style.code}
                     className={cn(
                       'cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg relative overflow-hidden border-2',
-                      selectedStyle === style.code && 'ring-2 ring-purple-500 ring-offset-2 scale-105',
+                      selectedStyle === style.code && 'ring-2 ring-primary ring-offset-2 scale-105',
                       !uploadedImage && 'opacity-75',
-                      !uploadedImage && selectedStyle === style.code && 'opacity-100'
+                      !uploadedImage && selectedStyle === style.code && 'opacity-100',
+                      isUploading && 'pointer-events-none opacity-50'
                     )}
                     onClick={() => handleStyleSelect(style.code)}
                   >
@@ -430,11 +530,26 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                         <div className="text-center">
                           <h3 className="font-semibold text-sm">{style.name}</h3>
                           <p className="text-xs text-muted-foreground mt-1">{style.description}</p>
+                          <p>{style.code}</p>
+                          <p>--{JSON.stringify(style.params)}</p>
                         </div>
 
-                        {selectedStyle === style.code && <Badge className="w-full justify-center bg-purple-600 text-white">{imageStyleTransfer.styleSelection?.selectedBadgeText}</Badge>}
+                        {selectedStyle === style.code && <Badge className="w-full justify-center">{imageStyleTransfer.styleSelection?.selectedBadgeText}</Badge>}
 
-                        {!uploadedImage && (
+                        {/* 如未上传图片则提示先上传；上传中或未上传时按钮禁用 */}
+                        {uploadedImage ? (
+                          <Button
+                            size="sm"
+                            className="w-full"
+                            disabled={isUploading}
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleOpenGenerateDialog(style.code);
+                            }}
+                          >
+                            Generate
+                          </Button>
+                        ) : (
                           <Badge variant="outline" className="w-full justify-center text-xs opacity-60">
                             {imageStyleTransfer.styleSelection?.uploadFirstMessage}
                           </Badge>
@@ -448,15 +563,64 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
           </CardContent>
         </Card>
 
-        {/* 生成按钮：已选风格且已上传图片时出现 */}
-        {uploadedImage && selectedStyle && imageUrl && !processedImage && !isProcessing && (
-          <Button onClick={handleGenerate} className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 w-full" disabled={isProcessing}>
-            <Icon name="LuSparkles" className="mr-2 h-4 w-4" />
-            {'开始生成'}
-          </Button>
-        )}
-
         <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+
+        {/* 确认生成 / 参数填写对话框 */}
+        {showParamDialog && (
+          <Dialog open={showParamDialog} onOpenChange={setShowParamDialog}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirm Generation</DialogTitle>
+                <DialogDescription>Please confirm and fill in required parameters.</DialogDescription>
+              </DialogHeader>
+
+              {(() => {
+                const currentParamsList = imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle)?.params;
+                const hasParams = currentParamsList && currentParamsList.length > 0;
+                const isParamsValid = !hasParams || currentParamsList.every(param => (paramValues[param.code] || '').trim() !== '');
+
+                return (
+                  <>
+                    {hasParams && (
+                      <div className="space-y-4">
+                        {currentParamsList?.map(param => (
+                          <div key={param.code} className="space-y-2">
+                            <Label htmlFor={param.code}>{param.title}</Label>
+                            <Input
+                              id={param.code}
+                              placeholder={param.description}
+                              value={paramValues[param.code] || ''}
+                              onChange={e =>
+                                setParamValues(prev => ({
+                                  ...prev,
+                                  [param.code]: e.target.value,
+                                }))
+                              }
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {!hasParams && <p className="text-sm text-muted-foreground">No additional parameters required. Click confirm to start generation.</p>}
+
+                    <DialogFooter className="pt-4">
+                      <Button
+                        disabled={!isParamsValid}
+                        onClick={() => {
+                          setShowParamDialog(false);
+                          handleGenerate();
+                        }}
+                      >
+                        Confirm
+                      </Button>
+                    </DialogFooter>
+                  </>
+                );
+              })()}
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </section>
   );
