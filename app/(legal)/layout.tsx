@@ -1,36 +1,28 @@
-import "@/app/globals.css";
+import '@/app/globals.css';
 
-import Icon from "@/components/icon";
-import { Metadata } from "next";
-import React from "react";
-import { getTranslations } from "next-intl/server";
+import Icon from '@/components/icon';
+import { Metadata } from 'next';
+import React from 'react';
+import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations();
 
   return {
     title: {
-      template: `%s | ${t("metadata.title")}`,
-      default: t("metadata.title"),
+      template: `%s | ${t('metadata.title')}`,
+      default: t('metadata.title'),
     },
-    description: t("metadata.description"),
-    keywords: t("metadata.keywords"),
+    description: t('metadata.description'),
   };
 }
 
-export default function LegalLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
         <div>
-          <a
-            className="text-base-content cursor-pointer hover:opacity-80 transition-opacity"
-            href="/"
-          >
+          <a className="text-base-content cursor-pointer hover:opacity-80 transition-opacity" href="/">
             <Icon name="MdOutlineHome" className="text-2xl mx-8 my-8" />
             {/* <img className="w-10 h-10 mx-4 my-4" src="/logo.png" /> */}
           </a>

@@ -1,70 +1,29 @@
 {
   "template": "shipany-template-one",
   "theme": "light",
-  "header": {
-    "brand": {
-      "title": "ShipAny",
-      "logo": {
-        "src": "/logo.png",
-        "alt": "ShipAny"
-      },
-      "url": "/"
-    },
-    "nav": {
-      "items": [
-        {
-          "title": "Features",
-          "url": "/#feature",
-          "icon": "RiSparkling2Line"
-        },
-        {
-          "title": "Pricing",
-          "url": "/pricing",
-          "icon": "RiMoneyDollarCircleLine"
-        },
-        {
-          "title": "Showcase",
-          "url": "/showcase",
-          "icon": "RiApps2Line"
-        }
-      ]
-    },
-    "buttons": [
-      {
-        "title": "Get ShipAny",
-        "url": "https://shipany.ai",
-        "target": "_blank",
-        "variant": "link",
-        "icon": "RiArrowRightUpLine"
-      }
-    ],
-    "showSign": true,
-    "showTheme": true,
-    "showLocale": true
-  },
   "hero": {
-    "title": "Ship Any AI Startups in hours, not days",
-    "highlight_text": "Ship Any",
-    "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups.<br/>Ship Fast with a variety of templates and components.",
+    "title": "Your Ultimate AI Image Style Generator",
+    "highlight_text": "AI Image Style",
+    "description": "Instantly generate stunning visuals in any art style imaginable. From Van Gogh to Anime, our AI brings your creative ideas to life. <br/>No design skills needed.",
     "announcement": {
-      "label": "2025",
-      "title": "🎉 Happy New Year",
-      "url": "/#pricing"
+      "label": "New",
+      "title": "🎨 Now Supporting Style Transfer Between Two Images!",
+      "url": "/style-transfer"
     },
-    "tip": "🎁 50% off before 2025",
+    "tip": "🎁 Get started for free. No credit card required.",
     "buttons": [
       {
-        "title": "Get Started",
+        "title": "Generate Your Art",
         "icon": "RiFlashlightFill",
-        "url": "/#pricing",
+        "url": "/#generator",
         "target": "_self",
         "variant": "default"
       },
       {
-        "title": "Join Discord",
-        "icon": "RiDiscordFill",
-        "url": "https://discord.gg/HQNnrzjZQS",
-        "target": "_blank",
+        "title": "Explore Styles",
+        "icon": "RiPaintBrushLine",
+        "url": "/ai-art-styles",
+        "target": "_self",
         "variant": "outline"
       }
     ],
@@ -72,250 +31,197 @@
     "show_badge": false
   },
   "branding": {
-    "title": "ShipAny is built on the shoulders of giants",
-    "items": [
-      {
-        "title": "Next.js",
-        "image": {
-          "src": "/imgs/logos/nextjs.svg",
-          "alt": "Next.js"
-        }
-      },
-      {
-        "title": "React",
-        "image": {
-          "src": "/imgs/logos/react.svg",
-          "alt": "React"
-        }
-      },
-      {
-        "title": "TailwindCSS",
-        "image": {
-          "src": "/imgs/logos/tailwindcss.svg",
-          "alt": "TailwindCSS"
-        }
-      },
-      {
-        "title": "Shadcn/UI",
-        "image": {
-          "src": "/imgs/logos/shadcn.svg",
-          "alt": "Shadcn/UI"
-        }
-      }
-    ]
+    "title": "Trusted by Creators and Digital Artists Worldwide",
+    "items": []
   },
   "introduce": {
-    "name": "introduce",
-    "title": "What is ShipAny",
-    "label": "Introduce",
-    "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups. Built in a variety of templates and components.",
+    "name": "generator",
+    "title": "How Our AI Art Style Generator Works",
+    "label": "How It Works",
+    "description": "Transform your text prompts into unique, high-quality art in three simple steps. Our advanced AI models understand both content and style.",
     "image": {
-      "src": "/imgs/features/1.png"
+      "src": "/imgs/features/how-it-works.png"
     },
     "items": [
       {
-        "title": "Ready-to-use Templates",
-        "description": "Choose from dozens of production-ready AI SaaS templates to quickly start your project.",
-        "icon": "RiNextjsFill"
+        "title": "1. Describe Your Vision",
+        "description": "Write a text prompt describing what you want to see. Be as simple or as detailed as you like.",
+        "icon": "RiQuillPenLine"
       },
       {
-        "title": "Infrastructure Setup",
-        "description": "Get instant access to scalable infrastructure with best practices built-in.",
-        "icon": "RiDatabase2Line"
+        "title": "2. Choose Your AI Art Style",
+        "description": "Select from a vast library of styles—from classic painters to modern digital art—or upload your own.",
+        "icon": "RiGalleryLine"
       },
       {
-        "title": "Quick Deployment",
-        "description": "Deploy your AI SaaS application to production in hours, not days.",
-        "icon": "RiCloudyFill"
+        "title": "3. Generate & Refine",
+        "description": "Our AI creates your masterpiece in seconds. Don't like it? Tweak the prompt or style and try again.",
+        "icon": "RiMagicLine"
       }
     ]
   },
   "benefit": {
-    "name": "benefit",
-    "title": "Why Choose ShipAny",
-    "label": "Benefits",
-    "description": "Get everything you need to launch your AI startup - from ready-to-use templates to technical support.",
+    "name": "features",
+    "title": "More Than Just a Generator",
+    "label": "Core Features",
+    "description": "Unlock a full suite of AI-powered tools designed to give you complete creative control over your artistic style.",
     "items": [
       {
-        "title": "Complete Framework",
-        "description": "Built on Next.js with authentication, payments, and AI integration - everything works out of the box.",
-        "icon": "RiNextjsFill",
+        "title": "AI Style Transfer",
+        "description": "Apply the artistic style from any reference image to your own photos. Turn a selfie into a Picasso portrait instantly.",
+        "icon": "RiShuffleLine",
         "image": {
-          "src": "/imgs/features/2.png"
+          "src": "/imgs/features/style-transfer.png"
         }
       },
       {
-        "title": "Rich Templates Library",
-        "description": "Choose from various AI SaaS templates to kickstart your project - chatbots, image generation, and more.",
-        "icon": "RiClapperboardAiLine",
+        "title": "Intelligent Style Library",
+        "description": "Explore hundreds of pre-trained AI art styles. Each style is an entity our AI understands deeply, ensuring authentic results.",
+        "icon": "RiApps2Line",
         "image": {
-          "src": "/imgs/features/3.png"
+          "src": "/imgs/features/style-library.png"
         }
       },
       {
-        "title": "Technical Guidance",
-        "description": "Get dedicated support and join our developer community to ensure your successful launch.",
-        "icon": "RiCodeFill",
+        "title": "AI Prompt Extractor",
+        "description": "Love an image? Upload it, and our AI will analyze it to generate descriptive keywords and prompts you can use.",
+        "icon": "RiChatQuoteLine",
         "image": {
-          "src": "/imgs/features/4.png"
+          "src": "/imgs/features/prompt-extractor.png"
         }
       }
     ]
   },
   "usage": {
     "name": "usage",
-    "title": "How to Launch with ShipAny",
-    "description": "Get your AI SaaS startup running in three simple steps:",
+    "title": "Create Your First Masterpiece",
+    "description": "Follow this guide to see how easy it is to bring your imagination to life with our AI.",
     "image": {
-      "src": "/imgs/features/1.png"
+      "src": "/imgs/features/usage-guide.png"
     },
     "image_position": "left",
-    "text_align": "center",
+    "text_align": "left",
     "items": [
       {
-        "title": "Get ShipAny",
-        "description": "Buy ShipAny with a one-time payment. Check your email for the code and documentation.",
+        "title": "Start with a Text Prompt",
+        "description": "Example: 'A majestic lion wearing a crown, sitting on a throne in a futuristic city'.",
         "image": {
-          "src": "/imgs/features/5.png"
+          "src": "/imgs/usage/step1.png"
         }
       },
       {
-        "title": "Start Your Project",
-        "description": "Read the documentation and clone the code of ShipAny. Start building your AI SaaS startup.",
+        "title": "Select 'Cyberpunk' Style",
+        "description": "Browse our style library and click on the 'Cyberpunk' preset to apply its neon and high-tech aesthetic.",
         "image": {
-          "src": "/imgs/features/6.png"
+          "src": "/imgs/usage/step2.png"
         }
       },
       {
-        "title": "Customize Your Project",
-        "description": "Modify the template with your data and contents. Specific AI functionality needs.",
+        "title": "Hit 'Generate'",
+        "description": "Watch as the AI combines your prompt with the chosen style to create a unique piece of art.",
         "image": {
-          "src": "/imgs/features/7.png"
+          "src": "/imgs/usage/step3.png"
         }
       },
       {
-        "title": "Deploy to Production",
-        "description": "Deploy your project to production with a few steps and start serving customers immediately.",
+        "title": "Apply Style to Your Photo",
+        "description": "Alternatively, upload your own photo and a style image (like a Van Gogh painting) to merge them.",
         "image": {
-          "src": "/imgs/features/8.png"
+          "src": "/imgs/usage/step4.png"
         }
       }
     ]
   },
   "feature": {
-    "name": "feature",
-    "title": "Key Features of ShipAny",
-    "description": "Everything you need to launch your AI SaaS startup quickly and efficiently.",
+    "name": "why-us",
+    "title": "Why Choose AI-Style.art?",
+    "description": "We focus on quality, control, and authenticity to provide a superior creative experience.",
     "items": [
       {
-        "title": "Next.js Boilerplate",
-        "description": "Production-ready Next.js templates with SEO-friendly structure and i18n support.",
-        "icon": "RiNextjsFill"
+        "title": "Authentic Style Emulation",
+        "description": "Our AI is trained on art history, not just images, to better capture the essence of each style entity.",
+        "icon": "RiBankLine"
       },
       {
-        "title": "Authentication & Payments",
-        "description": "Integrated Google OAuth, one-tap login, and Stripe payment processing.",
-        "icon": "RiKey2Fill"
+        "title": "High-Resolution Output",
+        "description": "Generate images suitable for printing, social media, and professional projects.",
+        "icon": "RiAspectRatioLine"
       },
       {
-        "title": "Data Infrastructure",
-        "description": "Built-in Supabase integration for reliable and scalable data storage.",
-        "icon": "RiDatabase2Line"
-      },
-      {
-        "title": "One-Click Deployment",
-        "description": "Seamless deployment with automated setup.",
-        "icon": "RiCloudy2Fill"
-      },
-      {
-        "title": "Business Analytics",
-        "description": "Integrated Google Analytics and Search Console for tracking growth.",
-        "icon": "RiBarChart2Line"
-      },
-      {
-        "title": "AI-Ready Infrastructure",
-        "description": "Pre-configured AI integration with built-in credits system and API sales.",
+        "title": "Advanced Model Selection",
+        "description": "For experts, choose specific AI models that best suit your desired outcome and style.",
         "icon": "RiRobot2Line"
+      },
+      {
+        "title": "Privacy-Focused",
+        "description": "Your uploaded images are yours. We use them only for generation and do not store them without permission.",
+        "icon": "RiShieldCheckLine"
+      },
+      {
+        "title": "Rapid Generation",
+        "description": "Our optimized infrastructure delivers your artwork in seconds, not minutes.",
+        "icon": "RiSpeedUpLine"
+      },
+      {
+        "title": "Simple & Intuitive UI",
+        "description": "A clean, user-friendly interface that's powerful for pros and easy for beginners.",
+        "icon": "RiMouseLine"
       }
     ]
   },
   "stats": {
     "name": "stats",
-    "label": "Stats",
-    "title": "People Love ShipAny",
-    "description": "for it's easy to use and fast to ship.",
+    "label": "Community",
+    "title": "Join Millions of Creators",
+    "description": "who are pushing the boundaries of art and technology.",
     "icon": "FaRegHeart",
     "items": [
       {
-        "title": "Trusted by",
-        "label": "99+",
-        "description": "Customers"
+        "title": "Creations Generated",
+        "label": "10M+",
+        "description": "Artworks"
       },
       {
-        "title": "Built in",
-        "label": "20+",
-        "description": "Components"
+        "title": "Unique Styles",
+        "label": "500+",
+        "description": "Available"
       },
       {
-        "title": "Ship Fast in",
-        "label": "5",
-        "description": "Minutes"
+        "title": "Happy Users",
+        "label": "1.2M+",
+        "description": "Worldwide"
       }
     ]
   },
   "testimonial": {
     "name": "testimonial",
-    "label": "Testimonial",
-    "title": "What Users Say About ShipAny",
-    "description": "Hear from developers and founders who launched their AI startups with ShipAny.",
+    "label": "Showcase",
+    "title": "What Our Users Create (Experience)",
+    "description": "See the real-world results from artists, designers, and hobbyists using our AI style generator.",
     "icon": "GoThumbsup",
     "items": [
       {
-        "title": "David Chen",
-        "label": "Founder of AIWallpaper.shop",
-        "description": "ShipAny saved us months of development time. We launched our AI wallpaper business in just 2 days and got our first paying customer within a week!",
+        "title": "Lana, Digital Artist",
+        "label": "Experience in Action",
+        "description": "The AI style transfer is a game-changer for my workflow. I can quickly apply a consistent aesthetic across a whole series of works. The 'Impressionism' style is incredibly accurate!",
         "image": {
           "src": "/imgs/users/1.png"
         }
       },
       {
-        "title": "Rachel Kim",
-        "label": "CTO at HeyBeauty.ai",
-        "description": "The pre-built AI infrastructure is a game-changer. We didn't have to worry about architecture - just focused on our AI beauty tech and went live fast.",
+        "title": "Mark, Game Developer",
+        "label": "Experience in Action",
+        "description": "I use AI-Style.art to prototype concept art. The 'Cyberpunk' and 'Steampunk' styles are perfect for generating environment ideas in minutes. Saves me hundreds of hours.",
         "image": {
           "src": "/imgs/users/2.png"
         }
       },
       {
-        "title": "Marcus Thompson",
-        "label": "Solo Developer",
-        "description": "As a solo developer, ShipAny gave me everything I needed - auth, payments, AI integration, and beautiful UI. Launched my SaaS in a weekend!",
+        "title": "Chloe, Small Business Owner",
+        "label": "Experience in Action",
+        "description": "As someone with zero art skills, I can finally create professional-looking social media posts. The 'Watercolor' style is my favorite for product announcements!",
         "image": {
           "src": "/imgs/users/3.png"
-        }
-      },
-      {
-        "title": "Sofia Garcia",
-        "label": "CEO of Melodisco",
-        "description": "The templates are production-ready and highly customizable. We built our AI music platform in hours instead of months. Incredible time-to-market!",
-        "image": {
-          "src": "/imgs/users/4.png"
-        }
-      },
-      {
-        "title": "James Wilson",
-        "label": "Tech Lead at GPTs.works",
-        "description": "ShipAny's infrastructure is rock-solid. We scaled from 0 to 10k users without touching the backend. Best investment for our AI startup.",
-        "image": {
-          "src": "/imgs/users/5.png"
-        }
-      },
-      {
-        "title": "Anna Zhang",
-        "label": "Startup Founder",
-        "description": "From idea to launch in 3 days! ShipAny's templates and deployment tools made it possible to test our AI business concept incredibly fast.",
-        "image": {
-          "src": "/imgs/users/6.png"
         }
       }
     ]
@@ -323,169 +229,52 @@
   "faq": {
     "name": "faq",
     "label": "FAQ",
-    "title": "Frequently Asked Questions About ShipAny",
-    "description": "Have another question? Contact us on Discord or by email.",
+    "title": "Frequently Asked Questions",
+    "description": "Everything you need to know about creating with AI art styles.",
     "items": [
       {
-        "title": "What exactly is ShipAny and how does it work?",
-        "description": "ShipAny is a comprehensive NextJS boilerplate designed specifically for building AI SaaS startups. It provides ready-to-use templates, infrastructure setup, and deployment tools that help you launch your AI business in hours instead of days."
+        "title": "What is an AI art style?",
+        "description": "An AI art style is a visual aesthetic that an artificial intelligence model has learned to recognize and replicate. It's more than a filter; the AI understands the core characteristics of an entity—like Van Gogh's brushstrokes or Anime's line art—and applies them to a new image or prompt."
       },
       {
-        "title": "Do I need advanced technical skills to use ShipAny?",
-        "description": "While basic programming knowledge is helpful, ShipAny is designed to be developer-friendly. Our templates and documentation make it easy to get started, even if you're not an expert in AI or cloud infrastructure."
+        "title": "How does AI style transfer work?",
+        "description": "AI style transfer uses a deep learning technique where two images are provided: a 'content' image (like your photo) and a 'style' reference image (like a painting). The AI then redraws the content image to match the texture, color palette, and patterns of the style reference."
       },
       {
-        "title": "What types of AI SaaS can I build with ShipAny?",
-        "description": "ShipAny supports a wide range of AI applications, from content generation to data analysis tools. Our templates cover popular use cases like AI chatbots, content generators, image processing apps, and more."
+        "title": "Can I use the images I generate for commercial purposes?",
+        "description": "This depends on the plan you choose. Our free plan is for personal use only. Our Pro plans grant you full ownership and commercial rights to the images you create, provided your input prompt and images do not infringe on existing copyrights."
       },
       {
-        "title": "How long does it typically take to launch with ShipAny?",
-        "description": "With ShipAny, you can have a working prototype in hours and a production-ready application in hours. Our one-click deployment and pre-configured infrastructure significantly reduce the traditional months-long development cycle."
+        "title": "Is my data and are my uploaded images safe?",
+        "description": "Yes. We take privacy seriously. Your uploaded images are used solely for the generation process and are automatically deleted from our servers after 24 hours unless you choose to save them to your private gallery. We do not use your images for AI training."
       },
       {
-        "title": "What's included in the ShipAny infrastructure?",
-        "description": "ShipAny provides a complete infrastructure stack including authentication, database setup, API integration, payment processing, and scalable cloud deployment. Everything is pre-configured following industry best practices."
+        "title": "What makes your AI art styles different from others?",
+        "description": "Our focus is on entity-based style learning. Instead of just mimicking surface looks, our models are trained with contextual information about the artists, movements, and techniques, leading to more authentic and nuanced results. This provides a clear 'information gain' for both users and search engines."
       },
       {
-        "title": "Can I customize the templates to match my brand?",
-        "description": "Absolutely! All ShipAny templates are fully customizable. You can modify the design, features, and functionality to match your brand identity and specific business requirements while maintaining the robust underlying infrastructure."
+        "title": "What is a prompt extractor?",
+        "description": "Our prompt extractor tool analyzes an existing image and generates a text description (a prompt) and relevant keywords that could be used to create a similar image. It's a great way to deconstruct an art style you admire and learn about prompt engineering."
       }
     ]
   },
   "cta": {
     "name": "cta",
-    "title": "Ship your first AI SaaS Startup",
-    "description": "Start from here, ship with ShipAny.",
+    "title": "Ready to Create Your Own AI Art Style?",
+    "description": "Join our community and start generating stunning, unique artwork today. Your next masterpiece is just a click away.",
     "buttons": [
       {
-        "title": "Get ShipAny",
-        "url": "https://shipany.ai",
-        "target": "_blank",
+        "title": "Start for Free",
+        "url": "/#generator",
+        "target": "_self",
         "icon": "GoArrowUpRight"
       },
       {
-        "title": "Read Document",
-        "url": "https://docs.shipany.ai",
-        "target": "_blank",
+        "title": "Explore the Style Library",
+        "url": "/ai-art-styles",
+        "target": "_self",
         "variant": "outline"
       }
     ]
-  },
-  "footer": {
-    "name": "footer",
-    "brand": {
-      "title": "ShipAny",
-      "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups. Ship Fast with a variety of templates and components.",
-      "logo": {
-        "src": "/logo.png",
-        "alt": "ShipAny"
-      },
-      "url": "/"
-    },
-    "copyright": "© 2025 • ShipAny All rights reserved.",
-    "nav": {
-      "items": [
-        {
-          "title": "About",
-          "children": [
-            {
-              "title": "Features",
-              "url": "/#feature",
-              "target": "_self"
-            },
-            {
-              "title": "Showcases",
-              "url": "/#showcase",
-              "target": "_self"
-            },
-            {
-              "title": "Pricing",
-              "url": "/#pricing",
-              "target": "_self"
-            }
-          ]
-        },
-        {
-          "title": "Resources",
-          "children": [
-            {
-              "title": "Documents",
-              "url": "https://docs.shipany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "Components",
-              "url": "https://shipany.ai/components",
-              "target": "_blank"
-            },
-            {
-              "title": "Templates",
-              "url": "https://shipany.ai/templates",
-              "target": "_blank"
-            }
-          ]
-        },
-        {
-          "title": "Friends",
-          "children": [
-            {
-              "title": "ThinkAny",
-              "url": "https://thinkany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "HeyBeauty",
-              "url": "https://heybeauty.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "Pagen",
-              "url": "https://pagen.so",
-              "target": "_blank"
-            }
-          ]
-        }
-      ]
-    },
-    "social": {
-      "items": [
-        {
-          "title": "X",
-          "icon": "RiTwitterXFill",
-          "url": "https://x.com/shipanyai",
-          "target": "_blank"
-        },
-        {
-          "title": "Github",
-          "icon": "RiGithubFill",
-          "url": "https://github.com/shipanyai",
-          "target": "_blank"
-        },
-        {
-          "title": "Discord",
-          "icon": "RiDiscordFill",
-          "url": "https://discord.gg/HQNnrzjZQS",
-          "target": "_blank"
-        },
-        {
-          "title": "Email",
-          "icon": "RiMailLine",
-          "url": "mailto:support@shipany.ai",
-          "target": "_self"
-        }
-      ]
-    },
-    "agreement": {
-      "items": [
-        {
-          "title": "Privacy Policy",
-          "url": "/privacy-policy"
-        },
-        {
-          "title": "Terms of Service",
-          "url": "/terms-of-service"
-        }
-      ]
-    }
   }
 }

@@ -320,7 +320,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
   }, [isProcessing, taskId]);
 
   return (
-    <section id={imageStyleTransfer.name} className="w-full py-16 bg-gradient-to-br from-slate-50 to-slate-100">
+    <section id={imageStyleTransfer.name} className="w-full py-16 from-slate-50 to-slate-100">
       <div className="container mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
@@ -523,18 +523,14 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                     <CardContent className="p-4">
                       <div className="space-y-3">
                         {/* 示例图片 */}
-                        <div className="relative w-full h-24 rounded-md overflow-hidden bg-muted">
+                        <div className="relative w-full aspect-square rounded-md overflow-hidden bg-muted">
                           <Image src={style.demoImageUrl} alt={style.name} fill className="object-cover" />
                         </div>
 
                         <div className="text-center">
                           <h3 className="font-semibold text-sm">{style.name}</h3>
                           <p className="text-xs text-muted-foreground mt-1">{style.description}</p>
-                          <p>{style.code}</p>
-                          <p>--{JSON.stringify(style.params)}</p>
                         </div>
-
-                        {selectedStyle === style.code && <Badge className="w-full justify-center">{imageStyleTransfer.styleSelection?.selectedBadgeText}</Badge>}
 
                         {/* 如未上传图片则提示先上传；上传中或未上传时按钮禁用 */}
                         {uploadedImage ? (

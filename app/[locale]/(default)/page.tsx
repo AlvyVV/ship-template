@@ -1,43 +1,42 @@
-import Branding from "@/components/blocks/branding";
-import CTA from "@/components/blocks/cta";
-import FAQ from "@/components/blocks/faq";
-import Feature from "@/components/blocks/feature";
-import Feature1 from "@/components/blocks/feature1";
-import Feature2 from "@/components/blocks/feature2";
-import Feature3 from "@/components/blocks/feature3";
-import Hero from "@/components/blocks/hero";
-import Pricing from "@/components/blocks/pricing";
-import Showcase from "@/components/blocks/showcase";
-import Stats from "@/components/blocks/stats";
-import Testimonial from "@/components/blocks/testimonial";
-import { getLandingPage } from "@/services/page";
+import Branding from '@/components/blocks/branding';
+import CTA from '@/components/blocks/cta';
+import FAQ from '@/components/blocks/faq';
+import Feature from '@/components/blocks/feature';
+import Feature1 from '@/components/blocks/feature1';
+import Feature2 from '@/components/blocks/feature2';
+import Feature3 from '@/components/blocks/feature3';
+import Hero from '@/components/blocks/hero';
+import Pricing from '@/components/blocks/pricing';
+import Showcase from '@/components/blocks/showcase';
+import Stats from '@/components/blocks/stats';
+import Testimonial from '@/components/blocks/testimonial';
+import { LandingPage } from '@/types/pages/landing';
+import { getPage } from '@/services/load-page';
+import { getLocale } from 'next-intl/server';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
+export async function generateMetadata() {
+  const locale = await getLocale();
+  const pageResult = await getPage<LandingPage>(locale, 'home');
+
+  // 根据实际加载的语言设置 canonical URL
   let canonicalUrl = `${process.env.NEXT_PUBLIC_WEB_URL}`;
-
-  if (locale !== "en") {
-    canonicalUrl = `${process.env.NEXT_PUBLIC_WEB_URL}/${locale}`;
+  if (pageResult.actualLocale !== 'en') {
+    canonicalUrl = `${process.env.NEXT_PUBLIC_WEB_URL}/${pageResult.actualLocale}`;
   }
 
   return {
+    title: pageResult.content.meta?.title,
+    description: pageResult.content.meta?.description,
     alternates: {
       canonical: canonicalUrl,
     },
   };
 }
 
-export default async function LandingPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const page = await getLandingPage(locale);
+export default async function Landing({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = await getLocale();
+  const pageResult = await getPage<LandingPage>(locale, 'home');
+  const page = pageResult.content;
 
   return (
     <>

@@ -1,10 +1,16 @@
-import { Header } from "@/types/blocks/header";
-import { Hero } from "@/types/blocks/hero";
-import { Section } from "@/types/blocks/section";
-import { Footer } from "@/types/blocks/footer";
-import { Pricing } from "@/types/blocks/pricing";
+import { Header } from '@/types/blocks/header';
+import { Hero } from '@/types/blocks/hero';
+import { Section } from '@/types/blocks/section';
+import { Footer } from '@/types/blocks/footer';
+import { Pricing } from '@/types/blocks/pricing';
+
+export interface Meta {
+  title: string;
+  description: string;
+}
 
 export interface LandingPage {
+  meta?: Meta;
   header?: Header;
   hero?: Hero;
   branding?: Section;
