@@ -16,6 +16,7 @@ export async function POST(req: Request) {
     const pgClient = getPgWrapperClient();
     const { data: configData, error } = await pgClient.from('item_configs').select('content').eq('code', code).eq('project_id', process.env.PROJECT_ID).eq('is_deleted', false).single();
     if (error || !configData?.content) {
+      console.error('config not found', error, configData);
       return respErr('config not found');
     }
 
@@ -36,16 +37,20 @@ export async function POST(req: Request) {
     }
 
     console.log('params', params);
-    let prompt = promptData.prompt;
-    console.log('prompt', prompt);
-    //将params 替换到 prompt 中
-    for (const param of params) {
-      prompt = prompt.replace(`{{${param.code}}}`, param.value);
+    if (params) {
+      let prompt = promptData.prompt;
+      console.log('prompt', prompt);
+      //将params 替换到 prompt 中
+      for (const param of params) {
+        prompt = prompt.replace(`{{${param.code}}}`, param.value);
+        content.prompt = prompt;
+      }
+    } else {
+      content.prompt = promptData.prompt;
     }
 
-    console.log('prompt', prompt);
+    console.log('prompt', content.prompt);
     content.urls = [imageUrl];
-    content.prompt = prompt;
     content.aspectRatio = aspectRatio;
     content.n = n;
 

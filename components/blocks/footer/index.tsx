@@ -1,7 +1,12 @@
-import { Footer as FooterType } from "@/types/blocks/footer";
-import Icon from "@/components/icon";
+import { Footer as FooterType } from '@/types/blocks/footer';
+import Icon from '@/components/icon';
+import { getLocale } from 'next-intl/server';
+import { getComponent } from '@/services/load-components';
 
-export default function Footer({ footer }: { footer: FooterType }) {
+export default async function Footer() {
+  const locale = await getLocale();
+  const footer = await getComponent<FooterType>(locale, 'footer');
+
   if (footer.disabled) {
     return null;
   }
@@ -15,24 +20,10 @@ export default function Footer({ footer }: { footer: FooterType }) {
               {footer.brand && (
                 <div>
                   <div className="flex items-center justify-center gap-2 lg:justify-start">
-                    {footer.brand.logo && (
-                      <img
-                        src={footer.brand.logo.src}
-                        alt={footer.brand.logo.alt || footer.brand.title}
-                        className="h-11"
-                      />
-                    )}
-                    {footer.brand.title && (
-                      <p className="text-3xl font-semibold">
-                        {footer.brand.title}
-                      </p>
-                    )}
+                    {footer.brand.logo && <img src={footer.brand.logo.src} alt={footer.brand.logo.alt || footer.brand.title} className="h-11" />}
+                    {footer.brand.title && <p className="text-3xl font-semibold">{footer.brand.title}</p>}
                   </div>
-                  {footer.brand.description && (
-                    <p className="mt-6 text-md text-muted-foreground">
-                      {footer.brand.description}
-                    </p>
-                  )}
+                  {footer.brand.description && <p className="mt-6 text-md text-muted-foreground">{footer.brand.description}</p>}
                 </div>
               )}
               {footer.social && (
@@ -40,9 +31,7 @@ export default function Footer({ footer }: { footer: FooterType }) {
                   {footer.social.items?.map((item, i) => (
                     <li key={i} className="font-medium hover:text-primary">
                       <a href={item.url} target={item.target}>
-                        {item.icon && (
-                          <Icon name={item.icon} className="size-4" />
-                        )}
+                        {item.icon && <Icon name={item.icon} className="size-4" />}
                       </a>
                     </li>
                   ))}
@@ -67,20 +56,7 @@ export default function Footer({ footer }: { footer: FooterType }) {
             </div>
           </div>
           <div className="mt-8 flex flex-col justify-between gap-4 border-t pt-8 text-center text-sm font-medium text-muted-foreground lg:flex-row lg:items-center lg:text-left">
-            {footer.copyright && (
-              <p>
-                {footer.copyright}
-                {process.env.NEXT_PUBLIC_SHOW_POWERED_BY === "false" ? null : (
-                  <a
-                    href="https://shipany.ai"
-                    target="_blank"
-                    className="px-2 text-primary"
-                  >
-                    build with ShipAny
-                  </a>
-                )}
-              </p>
-            )}
+            {footer.copyright && <p>{footer.copyright}</p>}
 
             {footer.agreement && (
               <ul className="flex justify-center gap-4 lg:justify-start">

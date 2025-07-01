@@ -15,7 +15,6 @@ import { useState } from 'react';
 
 export default function SignForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const t = useTranslations();
-  const router = useRouter();
 
   // 添加状态以跟踪登录过程和错误
   const [loginStatus, setLoginStatus] = useState<string>('');
@@ -34,7 +33,7 @@ export default function SignForm({ className, ...props }: React.ComponentPropsWi
   const handleSignIn = async (provider: string) => {
     try {
       // 重置状态
-      setLoginStatus(`正在处理 ${provider} 登录...`);
+      setLoginStatus(`Processing ${provider} sign in...`);
       setError('');
 
       if (provider === 'google') {
@@ -43,14 +42,14 @@ export default function SignForm({ className, ...props }: React.ComponentPropsWi
           const currentPath = window.location.pathname;
 
           // 设置获取 state 的状态信息
-          setLoginStatus('正在获取登录参数...');
+          setLoginStatus('Fetching login parameters...');
 
           // 从服务器获取 state 参数
           const currentDomain = getCurrentDomain();
           const stateData = await api.get(`/auth/google/state?redirectPath=${currentDomain}${encodeURIComponent(currentPath)}`);
 
           if (stateData.status !== 'success' || !stateData.data || !stateData.data.state) {
-            throw new Error('服务器返回的 state 数据格式不正确');
+            throw new Error('Invalid state data format returned by server');
           }
 
           const state = stateData.data.state;
@@ -62,7 +61,7 @@ export default function SignForm({ className, ...props }: React.ComponentPropsWi
           console.log('googleRedirectUri', googleRedirectUri);
           // 检查必要的环境变量是否设置
           if (!googleClientId || !googleRedirectUri) {
-            const errorMsg = 'Google OAuth 配置不完整，请检查环境变量';
+            const errorMsg = 'Google OAuth configuration incomplete, please check environment variables';
             setError(errorMsg);
             setLoginStatus('');
             return;
@@ -74,14 +73,14 @@ export default function SignForm({ className, ...props }: React.ComponentPropsWi
           )}&response_type=code&scope=openid%20email%20profile&state=${encodeURIComponent(state)}`;
 
           // 设置状态，表示即将跳转
-          setLoginStatus('正在跳转到 Google 登录页面...');
+          setLoginStatus('Redirecting to Google sign-in page...');
 
           // 延迟一下，确保状态更新后再跳转
           setTimeout(() => {
             window.location.href = googleAuthUrl;
           }, 100);
         } catch (innerError) {
-          const errorMsg = `Google 登录处理失败: ${innerError instanceof Error ? innerError.message : String(innerError)}`;
+          const errorMsg = `Google sign-in failed: ${innerError instanceof Error ? innerError.message : String(innerError)}`;
           setError(errorMsg);
           setLoginStatus('');
         }
@@ -92,14 +91,14 @@ export default function SignForm({ className, ...props }: React.ComponentPropsWi
           const currentPath = window.location.pathname;
 
           // 设置获取 state 的状态信息
-          setLoginStatus('正在获取登录参数...');
+          setLoginStatus('Fetching login parameters...');
 
           // 从服务器获取 state 参数
           const currentDomain = getCurrentDomain();
           const stateData = await api.get(`/auth/github/state?redirectPath=${currentDomain}${encodeURIComponent(currentPath)}`);
 
           if (stateData.status !== 'success' || !stateData.data || !stateData.data.state) {
-            throw new Error('服务器返回的 state 数据格式不正确');
+            throw new Error('Invalid state data format returned by server');
           }
 
           const state = stateData.data.state;
@@ -110,7 +109,7 @@ export default function SignForm({ className, ...props }: React.ComponentPropsWi
 
           // 检查必要的环境变量是否设置
           if (!githubClientId || !githubRedirectUri) {
-            const errorMsg = 'GitHub OAuth 配置不完整，请检查环境变量';
+            const errorMsg = 'GitHub OAuth configuration incomplete, please check environment variables';
             setError(errorMsg);
             setLoginStatus('');
             return;
@@ -122,20 +121,20 @@ export default function SignForm({ className, ...props }: React.ComponentPropsWi
           )}`;
 
           // 设置状态，表示即将跳转
-          setLoginStatus('正在跳转到 GitHub 登录页面...');
+          setLoginStatus('Redirecting to GitHub sign-in page...');
 
           // 延迟一下，确保状态更新后再跳转
           setTimeout(() => {
             window.location.href = githubAuthUrl;
           }, 100);
         } catch (innerError) {
-          const errorMsg = `GitHub 登录处理失败: ${innerError instanceof Error ? innerError.message : String(innerError)}`;
+          const errorMsg = `GitHub sign-in failed: ${innerError instanceof Error ? innerError.message : String(innerError)}`;
           setError(errorMsg);
           setLoginStatus('');
         }
       }
     } catch (outerError) {
-      setError(`登录处理出错: ${outerError instanceof Error ? outerError.message : String(outerError)}`);
+      setError(`Sign-in processing error: ${outerError instanceof Error ? outerError.message : String(outerError)}`);
       setLoginStatus('');
     }
   };

@@ -16,6 +16,10 @@ export interface StyleOption {
 }
 
 export interface ImageStyleTransfer {
+  meta?: {
+    title?: string;
+    description?: string;
+  };
   disabled?: boolean;
   name?: string;
   title?: string;
