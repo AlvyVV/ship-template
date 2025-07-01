@@ -16,7 +16,6 @@ const fontSans = FontSans({
 });
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
   const t = await getTranslations();
 
   return {
@@ -25,7 +24,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       default: t('metadata.title') || '',
     },
     description: t('metadata.description') || '',
-    keywords: t('metadata.keywords') || '',
   };
 }
 
