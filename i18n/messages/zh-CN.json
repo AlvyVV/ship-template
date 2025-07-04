@@ -1,0 +1,22 @@
+{
+  "my_credits.title": "我的积分",
+  "my_credits.left_tip": "剩余积分: {left_credits}",
+  "my_credits.no_credits": "没有积分记录",
+  "my_credits.recharge": "充值",
+  "my_credits.table.trans_no": "交易号",
+  "my_credits.table.trans_type": "交易类型",
+  "my_credits.table.credits": "积分",
+  "my_credits.table.balance_after": "余额",
+  "my_credits.table.updated_at": "更新时间",
+  "my_credits.table.status": "状态",
+
+
+  "my_media_record.title": "我的媒体记录",
+  "my_media_record.description": "您生成或上传的所有媒体记录。",
+  "my_media_record.table.created_at": "创建时间",
+  "my_media_record.table.type": "类型",
+  "my_media_record.table.status": "状态",
+  "my_media_record.table.name": "名称",
+  "my_media_record.table.biz_code": "业务编码",
+  "my_media_record.no_records": "暂无媒体记录。"
+}

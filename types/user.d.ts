@@ -17,6 +17,8 @@ export interface User {
 }
 
 export interface UserCredits {
+  totalBalance?: number;
+  frozenBalance?: number;
   oneTimeCredits?: number;
   monthlyCredits?: number;
   totalCredits?: number;

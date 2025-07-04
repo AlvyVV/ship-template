@@ -1,65 +1,81 @@
-import Empty from "@/components/blocks/empty";
-import TableSlot from "@/components/console/slots/table";
-import { Table as TableSlotType } from "@/types/slots/table";
-import { getCreditsByUserUuid } from "@/models/credit";
-import { getTranslations } from "next-intl/server";
-import { getUserCredits } from "@/services/credit";
-import { getUserUuid } from "@/services/user";
-import dayjs from "dayjs";
+import { TableColumn } from '@/types/blocks/table';
+import TableSlot from '@/components/console/slots/table';
+import { Table as TableSlotType } from '@/types/slots/table';
+import { getTranslations } from 'next-intl/server';
+import dayjs from 'dayjs';
+import { redirect } from 'next/navigation';
+import { getUserCredits, getUserCreditRecords } from '@/services/credit';
+import { getUserUuid } from '@/services/user';
 
-export default async function () {
+export default async function MyCreditsPage() {
   const t = await getTranslations();
 
   const userUuid = await getUserUuid();
 
+  const callbackUrl = `${process.env.NEXT_PUBLIC_WEB_URL}/my-credits`;
   if (!userUuid) {
-    return <Empty message="no auth" />;
+    redirect(`/auth/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`);
   }
 
-  const data = await getCreditsByUserUuid(userUuid, 1, 100);
+  // 获取用户积分余额
+  const credits = await getUserCredits(userUuid);
 
-  const userCredits = await getUserCredits(userUuid);
-
+  // 获取用户积分流水记录
+  const creditRecords = await getUserCreditRecords(userUuid);
+  console.log('creditRecords', creditRecords);  
   const table: TableSlotType = {
-    title: t("my_credits.title"),
-    tip: {
-      title: t("my_credits.left_tip", {
-        leftCredits: userCredits?.leftCredits || 0,
-      }),
-    },
+    title: t('my_credits.title'),
+    // tip: {
+    //   title: t('my_credits.left_tip', {
+    //     leftCredits: credits?.totalBalance || 0,
+    //   }),
+    // },
     toolbar: {
       items: [
         {
-          title: t("my_credits.recharge"),
-          url: "/pricing",
-          target: "_blank",
-          icon: "RiBankCardLine",
+          title: t('my_credits.recharge'),
+          url: '/pricing',
+          target: '_blank',
+          icon: 'RiBankCardLine',
         },
       ],
     },
     columns: [
       {
-        title: t("my_credits.table.trans_no"),
-        name: "transNo",
+        title: t('my_credits.table.trans_no'),
+        name: 'transactionNo',
       },
       {
-        title: t("my_credits.table.trans_type"),
-        name: "transType",
+        title: t('my_credits.table.trans_type'),
+        name: 'transactionType',
       },
       {
-        title: t("my_credits.table.credits"),
-        name: "credits",
+        title: t('my_credits.table.credits'),
+        name: 'change',
+        callback: (item: any) => {
+          const change = item.change || 0;
+          return change >= 0 ? `+${change}` : `${change}`;
+        },
       },
       {
-        title: t("my_credits.table.updated_at"),
-        name: "createdAt",
-        callback: (v: any) => {
-          return dayjs(v.createdAt).format("YYYY-MM-DD HH:mm:ss");
+        title: t('my_credits.table.balance_after'),
+        name: 'balanceAfter',
+      },
+      {
+        title: t('my_credits.table.status'),
+        name: 'status',
+        callback: (item: any) => item.status || '-',
+      },
+      {
+        title: t('my_credits.table.updated_at'),
+        name: 'createdAt',
+        callback: (item: any) => {
+          return dayjs(item.createdAt).format('YYYY/MM/DD HH:mm:ss');
         },
       },
     ],
-    data,
-    emptyMessage: t("my_credits.no_credits"),
+    data: creditRecords.items,
+    emptyMessage: t('my_credits.no_credits'),
   };
 
   return <TableSlot {...table} />;

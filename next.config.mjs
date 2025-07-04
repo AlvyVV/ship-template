@@ -38,7 +38,6 @@ const configWithMDX = {
   ...nextConfig,
   experimental: {
     mdxRs: true,
-    cssChunking: false,
   },
 };
 

@@ -48,25 +48,73 @@ class ApiClient {
    * Get token from cookies
    * @returns token string or null
    */
-  private getTokenFromCookie(): string | null {
-    if (typeof document === 'undefined') return null;
+  private async getTokenFromCookie(): Promise<string | null> {
+    // 浏览器环境：直接从 document.cookie 读取
+    if (typeof document !== 'undefined') {
+      const browserToken = getCookieValue('auth_token') || getCookieValue('authToken');
+      if (browserToken) return browserToken as string;
 
-    const directToken = getCookieValue('auth_token');
-    console.log('directToken', directToken);
-    if (directToken) {
-      return directToken;
+      try {
+        const userInfoCookie = getCookieValue('user_info');
+        if (userInfoCookie) {
+          const userInfo = JSON.parse(decodeURIComponent(userInfoCookie));
+          if (userInfo.token) {
+            return userInfo.token;
+          }
+        }
+      } catch {
+        // ignore
+      }
     }
 
+    // 服务器端：通过 next/headers 读取 cookie
     try {
-      const userInfoCookie = getCookieValue('user_info');
-      if (userInfoCookie) {
-        const userInfo = JSON.parse(decodeURIComponent(userInfoCookie));
-        if (userInfo.token) {
-          return userInfo.token;
+      // 动态导入，避免在浏览器环境打包时引入 server-only 模块
+      const { cookies, headers } = require('next/headers');
+
+      // Next.js ≥15 中 cookies() 可能返回 Promise，需要处理异步情况
+      let cookieStore: any;
+      try {
+        cookieStore = cookies();
+        if (cookieStore?.then) {
+          cookieStore = await cookieStore;
+        }
+      } catch {
+        cookieStore = null;
+      }
+
+      if (cookieStore) {
+        const tokenCookie = cookieStore.get('auth_token')?.value || cookieStore.get('authToken')?.value;
+        if (tokenCookie) return tokenCookie;
+
+        const userInfoRaw = cookieStore.get('user_info')?.value;
+        if (userInfoRaw) {
+          const userInfo = JSON.parse(decodeURIComponent(userInfoRaw));
+          if (userInfo.token) return userInfo.token;
         }
       }
-    } catch (e) {
-      return null;
+
+      // 若 cookies API 不可用，回退到 headers()
+      try {
+        const headerList = headers();
+        const cookieHeader: string | null = headerList.get('cookie');
+        if (cookieHeader) {
+          const match = /(auth_token|authToken)=([^;]+)/.exec(cookieHeader);
+          if (match) return match[2];
+
+          // 解析 user_info
+          const userInfoMatch = /user_info=([^;]+)/.exec(cookieHeader);
+          if (userInfoMatch) {
+            const userInfoRaw = decodeURIComponent(userInfoMatch[1]);
+            const userInfo = JSON.parse(userInfoRaw);
+            if (userInfo.token) return userInfo.token;
+          }
+        }
+      } catch {
+        // ignore – 最终返回 null
+      }
+    } catch {
+      // in edge runtime without next/headers or other errors, silently fail
     }
 
     return null;
@@ -78,7 +126,7 @@ class ApiClient {
    * @param includeAuth Whether to include authentication token
    * @returns Headers object
    */
-  private buildHeaders(additionalHeaders: HeadersInit = {}, includeAuth: boolean = true): HeadersInit {
+  private async buildHeaders(additionalHeaders: HeadersInit = {}, includeAuth: boolean = true): Promise<HeadersInit> {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...additionalHeaders,
@@ -87,10 +135,18 @@ class ApiClient {
     console.log('includeAuth', includeAuth);
     // Get token from cookies and add Authorization header if available and requested
     if (includeAuth) {
-      const token = this.getTokenFromCookie();
+      const token = await this.getTokenFromCookie();
       console.log('token', token);
       if (token) {
+        // 始终添加 Authorization 头
         (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+
+        // 在服务端渲染环境下（无 document 对象）再额外添加 Cookie 头，方便后端通过 cookie 解析
+        if (typeof document === 'undefined') {
+          const existingCookieHeader = (headers as Record<string, string>)['Cookie'];
+          const cookieStr = `auth_token=${token}`;
+          (headers as Record<string, string>)['Cookie'] = existingCookieHeader ? `${existingCookieHeader}; ${cookieStr}` : cookieStr;
+        }
       }
     }
 
@@ -144,7 +200,7 @@ class ApiClient {
 
     const config: RequestInit = {
       ...options,
-      headers: this.buildHeaders(options.headers, includeAuth),
+      headers: await this.buildHeaders(options.headers, includeAuth),
     };
 
     // Remove includeAuth from options as it's not a standard fetch option
@@ -170,6 +226,7 @@ class ApiClient {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.log('error response', response);
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
 

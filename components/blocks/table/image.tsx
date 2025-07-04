@@ -1,17 +1,18 @@
-export default function TableItemImage({
-  value,
-  options,
-  className,
-}: {
-  value: string;
-  options?: any;
-  className?: string;
-}) {
+export default function TableItemImage({ value, options, className }: { value: string | string[]; options?: any; className?: string }) {
+  const urls = Array.isArray(value) ? value : [value];
+
+  // Button label can be customized via options.label (default "View")
+  const label: string = options?.label || 'View';
+
   return (
-    <img
-      src={value}
-      alt={value}
-      className={`w-10 h-10 rounded-full ${className}`}
-    />
+    <div className={`flex gap-2 ${className}`}>
+      {urls.map((url, idx) => (
+        <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className="inline-block">
+          <button type="button" className="px-2 py-1 text-xs font-medium text-primary underline rounded hover:text-primary/80">
+            {urls.length > 1 ? `${label} ${idx + 1}` : label}
+          </button>
+        </a>
+      ))}
+    </div>
   );
 }
