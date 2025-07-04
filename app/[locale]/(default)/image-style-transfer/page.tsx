@@ -1,8 +1,9 @@
 import ImageStyleTransferBlock from '@/components/blocks/image-style-transfer';
-import type { ImageStyleTransfer } from '@/types/blocks/image-style-transfer';
+import type { ImageStyleTransfer, StyleOption } from '@/types/blocks/image-style-transfer';
 import { getPage } from '@/services/load-page';
 import { getLocale } from 'next-intl/server';
 import { LandingPage } from '@/types/pages/landing';
+import { getPgWrapperClient } from '@/lib/db-wrapper';
 
 export async function generateMetadata() {
   const locale = await getLocale();
@@ -26,10 +27,11 @@ export async function generateMetadata() {
 export default async function ImageStyleTransferPage() {
   const locale = await getLocale();
   const imageStyleTransferData = await getPage<ImageStyleTransfer>(locale, 'image-style-transfer');
-
+  const { data } = await getPgWrapperClient().from('item_configs').select('content').eq('data_type', 'IMAGE_CONFIG').eq('locale', locale).eq('is_deleted', false).eq('status', 'online');
+  const styleOptions = data.map((records: { content: StyleOption }) => records.content) as StyleOption[];
   return (
     <div className="min-h-screen">
-      <ImageStyleTransferBlock imageStyleTransfer={imageStyleTransferData.content} />
+      <ImageStyleTransferBlock imageStyleTransfer={imageStyleTransferData.content} styleOptions={styleOptions} />
     </div>
   );
 }
