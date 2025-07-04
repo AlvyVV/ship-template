@@ -54,7 +54,7 @@ export default function SignUser({ user }: { user: User }) {
         </DropdownMenuItem> */}
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="flex justify-center cursor-pointer">
+        {/* <DropdownMenuItem className="flex justify-center cursor-pointer">
           <Link href="/my-chat" target="_blank">
             {t('user.my_chat')}
           </Link>

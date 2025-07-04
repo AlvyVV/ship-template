@@ -41,7 +41,6 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
   return (
     <>
       {page.hero && <Hero hero={page.hero} />}
-      {page.branding && <Branding section={page.branding} />}
       {page.introduce && <Feature1 section={page.introduce} />}
       {page.benefit && <Feature2 section={page.benefit} />}
       {page.usage && <Feature3 section={page.usage} />}

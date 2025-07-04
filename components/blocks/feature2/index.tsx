@@ -1,23 +1,13 @@
-"use client";
+'use client';
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
-import { useEffect, useState } from "react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { useEffect, useState } from 'react';
 
-import { Badge } from "@/components/ui/badge";
-import Fade from "embla-carousel-fade";
-import Icon from "@/components/icon";
-import { Section as SectionType } from "@/types/blocks/section";
+import { Badge } from '@/components/ui/badge';
+import Fade from 'embla-carousel-fade';
+import Icon from '@/components/icon';
+import { Section as SectionType } from '@/types/blocks/section';
 
 const DURATION = 5000;
 
@@ -27,14 +17,14 @@ export default function Feature2({ section }: { section: SectionType }) {
   }
 
   const [api, setApi] = useState<CarouselApi>();
-  const [currentAccordion, setCurrentAccordion] = useState("1");
+  const [currentAccordion, setCurrentAccordion] = useState('1');
 
   useEffect(() => {
     api?.scrollTo(+currentAccordion - 1);
     const interval = setInterval(() => {
-      setCurrentAccordion((prev) => {
+      setCurrentAccordion(prev => {
         const next = parseInt(prev) + 1;
-        return next > 3 ? "1" : next.toString();
+        return next > 3 ? '1' : next.toString();
       });
     }, DURATION);
 
@@ -51,40 +41,27 @@ export default function Feature2({ section }: { section: SectionType }) {
                 {section.label}
               </Badge>
             )}
-            <h2 className="mb-6 text-pretty text-3xl font-bold lg:text-4xl">
-              {section.title}
-            </h2>
-            <p className="mb-4 max-w-xl text-muted-foreground lg:max-w-none lg:text-lg">
-              {section.description}
-            </p>
+            <h2 className="mb-6 text-pretty text-3xl font-bold lg:text-4xl">{section.title}</h2>
+            <p className="mb-4 max-w-xl text-muted-foreground lg:max-w-none lg:text-lg">{section.description}</p>
             <Accordion
               type="single"
               value={currentAccordion}
-              onValueChange={(value) => {
+              onValueChange={value => {
                 setCurrentAccordion(value);
                 console.log(value);
                 api?.scrollTo(+value - 1);
               }}
             >
               {section.items?.map((item, i) => (
-                <AccordionItem
-                  key={i}
-                  value={(i + 1).toString()}
-                  className="border-b-0 border-secondary"
-                >
+                <AccordionItem key={i} value={(i + 1).toString()} className="border-b-0 border-secondary">
                   <AccordionTrigger className="text-left data-[state=closed]:text-muted-foreground">
                     <div className="flex items-center justify-between gap-2">
                       {item.icon && (
                         <p className="flex size-9 items-center justify-center rounded-lg bg-muted">
-                          <Icon
-                            name={item.icon}
-                            className="size-5 shrink-0 lg:size-6"
-                          />
+                          <Icon name={item.icon} className="size-5 shrink-0 lg:size-6" />
                         </p>
                       )}
-                      <span className="font-medium lg:text-lg">
-                        {item.title}
-                      </span>
+                      <span className="font-medium lg:text-lg">{item.title}</span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground lg:text-base">
@@ -114,11 +91,7 @@ export default function Feature2({ section }: { section: SectionType }) {
                 {section.items?.map((item, i) => (
                   <CarouselItem key={i}>
                     <div>
-                      <img
-                        src={item.image?.src}
-                        alt={item.image?.alt || item.title}
-                        className="max-h-auto w-full object-cover lg:max-h-none rounded-md"
-                      />
+                      <img src={item.image?.src} alt={item.image?.alt || item.title} className="max-h-auto w-full object-cover lg:max-h-none rounded-md" />
                     </div>
                   </CarouselItem>
                 ))}

@@ -60,6 +60,7 @@
       "trans_no": "交易号",
       "trans_type": "交易类型",
       "credits": "积分",
+      "balance_after": "余额",
       "updated_at": "更新时间",
       "status": "状态"
     }

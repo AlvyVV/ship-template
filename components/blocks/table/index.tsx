@@ -1,27 +1,12 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
-import { TableColumn } from "@/types/blocks/table";
-import TableItemImage from "./image";
-import TableItemLabel from "./label";
-import TableItemTime from "./time";
-import Copy from "./copy";
+import { TableColumn } from '@/types/blocks/table';
+import TableItemImage from './image';
+import TableItemLabel from './label';
+import TableItemTime from './time';
+import Copy from './copy';
 
-export default function TableComponent({
-  columns,
-  data,
-  emptyMessage,
-}: {
-  columns?: TableColumn[];
-  data?: any[];
-  emptyMessage?: string;
-}) {
+export default function TableComponent({ columns, data, emptyMessage }: { columns?: TableColumn[]; data?: any[]; emptyMessage?: string }) {
   if (!columns) {
     columns = [];
   }
@@ -48,37 +33,17 @@ export default function TableComponent({
                 columns.map((column: TableColumn, iidx: number) => {
                   const value = item[column.name as keyof typeof item];
 
-                  const content = column.callback
-                    ? column.callback(item)
-                    : value;
+                  const content = column.callback ? column.callback(item) : value;
 
                   let cellContent = content;
 
-                  if (column.type === "image") {
-                    cellContent = (
-                      <TableItemImage
-                        value={value}
-                        options={column.options}
-                        className={column.className}
-                      />
-                    );
-                  } else if (column.type === "time") {
-                    cellContent = (
-                      <TableItemTime
-                        value={value}
-                        options={column.options}
-                        className={column.className}
-                      />
-                    );
-                  } else if (column.type === "label") {
-                    cellContent = (
-                      <TableItemLabel
-                        value={value}
-                        options={column.options}
-                        className={column.className}
-                      />
-                    );
-                  } else if (column.type === "copy" && value) {
+                  if (column.type === 'image') {
+                    cellContent = <TableItemImage value={value} options={column.options} className={column.className} />;
+                  } else if (column.type === 'time') {
+                    cellContent = <TableItemTime value={value} options={column.options} className={column.className} />;
+                  } else if (column.type === 'label') {
+                    cellContent = <TableItemLabel value={value} options={column.options} className={column.className} />;
+                  } else if (column.type === 'copy' && value) {
                     cellContent = <Copy text={value}>{content}</Copy>;
                   }
 

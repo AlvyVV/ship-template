@@ -1,17 +1,13 @@
-"use client";
+'use client';
 
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
-import AutoScroll from "embla-carousel-auto-scroll";
-import { Card } from "@/components/ui/card";
-import Icon from "@/components/icon";
-import { Section as SectionType } from "@/types/blocks/section";
-import { useRef } from "react";
+import AutoScroll from 'embla-carousel-auto-scroll';
+import { Card } from '@/components/ui/card';
+import Icon from '@/components/icon';
+import { Section as SectionType } from '@/types/blocks/section';
+import { useRef } from 'react';
 
 export default function Testimonial({ section }: { section: SectionType }) {
   if (section.disabled) {
@@ -30,18 +26,12 @@ export default function Testimonial({ section }: { section: SectionType }) {
       <div className="flex flex-col items-center gap-4">
         {section.label && (
           <div className="flex items-center gap-1 text-sm font-semibold text-primary">
-            {section.icon && (
-              <Icon name={section.icon} className="h-6 w-auto border-primary" />
-            )}
+            {section.icon && <Icon name={section.icon} className="h-6 w-auto border-primary" />}
             {section.label}
           </div>
         )}
-        <h2 className="text-center text-3xl font-semibold lg:text-4xl">
-          {section.title}
-        </h2>
-        <p className="text-center text-muted-foreground lg:text-lg">
-          {section.description}
-        </p>
+        <h2 className="text-center text-3xl font-semibold lg:text-4xl">{section.title}</h2>
+        <p className="text-center text-muted-foreground lg:text-lg">{section.description}</p>
       </div>
       <div className="lg:container">
         <div className="mt-16 space-y-4">
@@ -60,31 +50,20 @@ export default function Testimonial({ section }: { section: SectionType }) {
                     <div className="flex justify-between">
                       <div className="mb-4 flex gap-4">
                         <Avatar className="size-14 rounded-full ring-1 ring-input">
-                          <AvatarImage
-                            src={item.image?.src}
-                            alt={item.image?.alt || item.title}
-                          />
+                          <AvatarImage src={item.image?.src} alt={item.image?.alt || item.title} />
                         </Avatar>
                         <div>
                           <p className="font-medium">{item.title}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {item.label}
-                          </p>
+                          <p className="text-sm text-muted-foreground">{item.label}</p>
                         </div>
                       </div>
                       <div className="flex gap-1">
                         {Array.from({ length: 5 }).map((_, i) => (
-                          <Icon
-                            name="RiStarLine"
-                            key={i}
-                            className="size-5 fill-amber-500 text-amber-500"
-                          />
+                          <Icon name="RiStarLine" key={i} className="size-5 fill-amber-500 text-amber-500" />
                         ))}
                       </div>
                     </div>
-                    <q className="leading-7 text-muted-foreground">
-                      {item.description}
-                    </q>
+                    <q className="leading-7 text-muted-foreground">{item.description}</q>
                   </Card>
                 </CarouselItem>
               ))}

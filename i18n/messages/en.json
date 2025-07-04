@@ -61,6 +61,7 @@
       "trans_no": "Trans No",
       "trans_type": "Trans Type",
       "credits": "Credits",
+      "balance_after": "Balance After",
       "updated_at": "Updated At",
       "status": "Status"
     }
@@ -122,5 +123,17 @@
     "contact_tip": "Other ways to contact us",
     "rating_tip": "How do you feel about ShipAny?",
     "placeholder": "Leave your words here..."
+  },
+  "my_media_record": {
+    "title": "My Media Records",
+    "description": "Your generated or uploaded media records.",
+    "table": {
+      "created_at": "Created At",
+      "type": "Type",
+      "status": "Status",
+      "name": "Name",
+      "biz_code": "Business Code"
+    },
+    "no_records": "No media records yet."
   }
 }
