@@ -2,7 +2,7 @@
 
 import type React from 'react';
 import { useRef, useState, useCallback, useEffect } from 'react';
-import type { ImageStyleTransfer } from '@/types/blocks/image-style-transfer';
+import type { ImageStyleTransfer, StyleOption } from '@/types/blocks/image-style-transfer';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Loader from '@/components/ui/loader';
 
-export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageStyleTransfer: ImageStyleTransfer }) {
+export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptions }: { imageStyleTransfer: ImageStyleTransfer; styleOptions: StyleOption[] }) {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
@@ -38,6 +38,12 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
   const { setShowSignModal } = useModal();
   // 图片上传状态，用于显示遮罩和禁用交互
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  // 选择的宽高比
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState<string>('');
+  const [processedDims, setProcessedDims] = useState<{ width: number; height: number } | null>(null);
+
+  // 结果区域引用，用于生成后滚动聚焦
+  const resultRef = useRef<HTMLDivElement>(null);
 
   /* === SSE 订阅处理 === */
   const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
@@ -53,6 +59,21 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
   }
 
   const handleFileSelect = useCallback(async (file: File) => {
+    // 若当前仍在生成中，提示用户确认
+    if (isProcessing) {
+      const confirmed = window.confirm('当前图片仍在生成中，切换图片后需要前往"用户生产记录"查看生成进度，确定要切换吗？');
+      if (!confirmed) return; // 用户取消切换
+
+      // 用户确认切换，停止本地进度展示
+      setIsProcessing(false);
+      setProgress(0);
+      // 清理进度定时器
+      if (progressTimerRef.current) {
+        clearInterval(progressTimerRef.current);
+        progressTimerRef.current = null;
+      }
+    }
+
     if (!file) return;
 
     // 本地预览 URL
@@ -115,7 +136,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
       setTaskId(null);
     }
 
-    const selectedStyleData = imageStyleTransfer.styleOptions?.find(s => s.code === styleId);
+    const selectedStyleData = styleOptions?.find(s => s.promptCode === styleId);
     const paramsList = selectedStyleData?.params as { title: string; code: string; description: string; value: string }[] | undefined;
 
     if (paramsList && paramsList.length > 0) {
@@ -128,6 +149,13 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
       setParamValues({});
     }
 
+    // 默认选择第一个宽高比
+    if (selectedStyleData?.aspectRatioList && selectedStyleData.aspectRatioList.length > 0) {
+      setSelectedAspectRatio(selectedStyleData.aspectRatioList[0]);
+    } else {
+      setSelectedAspectRatio('');
+    }
+
     setShowParamDialog(true);
   };
 
@@ -137,19 +165,31 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
     setSelectedStyle(styleId);
     setProcessedImage(null);
     setTaskId(null);
+    // 切换样式时重置宽高比选择
+    const styleData = styleOptions?.find(s => s.promptCode === styleId);
+    if (styleData?.aspectRatioList && styleData.aspectRatioList.length > 0) {
+      setSelectedAspectRatio(styleData.aspectRatioList[0]);
+    } else {
+      setSelectedAspectRatio('');
+    }
   };
 
   const doGenerate = async () => {
     if (!uploadedImage || !imageUrl || !selectedStyle) return;
 
     try {
-      const selectedStyleData = imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle);
-      const code = selectedStyleData?.code || selectedStyle;
+      const selectedStyleData = styleOptions?.find(s => s.promptCode === selectedStyle);
+      const code = selectedStyleData?.promptCode || selectedStyle;
       // 接口返回格式：{ code: 0, message: 'ok', data: { userMediaRecordId, exeTime, ... } }
       const payload: any = {
-        code,
+        promptCode: code,
         imageUrl,
       };
+
+      // 如果选择了宽高比则携带
+      if (selectedAspectRatio) {
+        payload.aspectRatio = selectedAspectRatio;
+      }
 
       if (paramValues && Object.keys(paramValues).length > 0) {
         payload.params = Object.entries(paramValues).map(([code, value]) => ({ code, value }));
@@ -320,8 +360,8 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
   }, [isProcessing, taskId]);
 
   return (
-    <section id={imageStyleTransfer.name} className="w-full py-16 from-slate-50 to-slate-100">
-      <div className="container mx-auto space-y-8">
+    <section id={imageStyleTransfer.name} className="w-full py-8 md:py-16 from-slate-50 to-slate-100">
+      <div className="container mx-auto space-y-6 md:space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2">
@@ -341,7 +381,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
             <CardDescription>{imageStyleTransfer.uploadSection?.description}</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-4 md:gap-8">
               {/* Left Column - Original/Upload */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-center">{imageStyleTransfer.uploadSection?.title}</h3>
@@ -360,7 +400,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                       if (file) handleFileSelect(file);
                     }}
                   >
-                    <CardContent className="h-full flex items-center justify-center p-8">
+                    <CardContent className="h-full flex items-center justify-center p-2 md:p-4">
                       <div className="text-center space-y-4">
                         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
                           <Icon name="LuUpload" className="h-8 w-8 text-muted-foreground" />
@@ -412,11 +452,11 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
               </div>
 
               {/* Right Column - Processed Result */}
-              <div className="space-y-4">
+              <div className="space-y-4" ref={resultRef}>
                 <h3 className="text-lg font-semibold text-center">{imageStyleTransfer.resultSection?.title}</h3>
                 {!uploadedImage ? (
                   <Card className="border-dashed border-2 border-muted-foreground/25 h-96">
-                    <CardContent className="h-full flex items-center justify-center p-8">
+                    <CardContent className="h-full flex items-center justify-center p-2 md:p-4">
                       <div className="text-center space-y-4">
                         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
                           <Icon name="LuSparkles" className="h-8 w-8 text-muted-foreground" />
@@ -429,8 +469,8 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                     </CardContent>
                   </Card>
                 ) : isProcessing ? (
-                  <Card className="h-full">
-                    <CardContent className="h-full flex items-center justify-center p-8">
+                  <Card style={{ height: leftHeight || 'auto' }} className="flex items-center justify-center">
+                    <CardContent className="flex-1 flex items-center justify-center p-2 md:p-4">
                       <div className="text-center space-y-4">
                         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
                           <Icon name="LuSparkles" className="h-8 w-8 text-primary animate-spin" />
@@ -451,8 +491,21 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                   </Card>
                 ) : processedImage ? (
                   <div className="space-y-4">
-                    <div className="relative w-full rounded-lg overflow-hidden border" style={{ height: leftHeight || 'auto' }}>
-                      <Image src={processedImage || '/placeholder.svg'} alt="Processed image" fill className="object-cover" />
+                    {/* 根据图片自身比例自适应宽高，避免变形 */}
+                    <div
+                      className="relative w-full rounded-lg overflow-hidden border"
+                      style={processedDims ? { aspectRatio: `${processedDims.width} / ${processedDims.height}` } : { height: leftHeight || 'auto' }}
+                    >
+                      <Image
+                        src={processedImage || '/placeholder.svg'}
+                        alt="Processed image"
+                        fill
+                        className="object-contain"
+                        onLoadingComplete={img => {
+                          // 记录真实尺寸，以便通过 CSS aspect-ratio 保持比例
+                          setProcessedDims({ width: img.naturalWidth, height: img.naturalHeight });
+                        }}
+                      />
                     </div>
                     <div className="flex justify-center gap-2">
                       <Button
@@ -460,6 +513,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                         onClick={() => {
                           setProcessedImage(null);
                           setSelectedStyle(null);
+                          setProcessedDims(null);
                         }}
                       >
                         {imageStyleTransfer.resultSection?.tryAnotherButton?.title}
@@ -473,7 +527,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                   </div>
                 ) : (
                   <Card className="border-dashed border-2 border-muted-foreground/25" style={{ height: leftHeight || undefined }}>
-                    <CardContent className="h-full flex items-center justify-center p-8">
+                    <CardContent className="h-full flex items-center justify-center p-2 md:p-4">
                       <div className="text-center space-y-4">
                         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
                           <Icon name="LuPalette" className="h-8 w-8 text-muted-foreground" />
@@ -483,7 +537,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                           <p className="text-sm text-muted-foreground">{imageStyleTransfer.resultSection?.readyMessage?.description}</p>
                           {selectedStyle && (
                             <Badge className="mt-2">
-                              {imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle)?.name} {imageStyleTransfer.styleSelection?.selectedBadgeText}
+                              {styleOptions?.find(s => s.promptCode === selectedStyle)?.name} {imageStyleTransfer.styleSelection?.selectedBadgeText}
                             </Badge>
                           )}
                         </div>
@@ -503,25 +557,24 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
               <Icon name="LuPalette" className="h-5 w-5" />
               {imageStyleTransfer.styleSelection?.title}
             </CardTitle>
-            <CardDescription>{imageStyleTransfer.styleSelection?.description}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {imageStyleTransfer.styleOptions?.map(style => {
+              {styleOptions?.map(style => {
                 return (
                   <Card
-                    key={style.code}
+                    key={style.promptCode}
                     className={cn(
                       'cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg relative overflow-hidden border-2',
-                      selectedStyle === style.code && 'ring-2 ring-primary ring-offset-2 scale-105',
+                      selectedStyle === style.promptCode && 'ring-2 ring-primary ring-offset-2 scale-105',
                       !uploadedImage && 'opacity-75',
-                      !uploadedImage && selectedStyle === style.code && 'opacity-100',
+                      !uploadedImage && selectedStyle === style.promptCode && 'opacity-100',
                       isUploading && 'pointer-events-none opacity-50'
                     )}
-                    onClick={() => handleStyleSelect(style.code)}
+                    onClick={() => handleStyleSelect(style.promptCode)}
                   >
-                    <CardContent className="p-4">
-                      <div className="space-y-3">
+                    <CardContent className="p-2 md:p-4">
+                      <div className="space-y-4">
                         {/* 示例图片 */}
                         <div className="relative w-full aspect-square rounded-md overflow-hidden bg-muted">
                           <Image src={style.demoImageUrl} alt={style.name} fill className="object-cover" />
@@ -540,7 +593,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                             disabled={isUploading}
                             onClick={e => {
                               e.stopPropagation();
-                              handleOpenGenerateDialog(style.code);
+                              handleOpenGenerateDialog(style.promptCode);
                             }}
                           >
                             Generate
@@ -571,9 +624,12 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
               </DialogHeader>
 
               {(() => {
-                const currentParamsList = imageStyleTransfer.styleOptions?.find(s => s.code === selectedStyle)?.params;
+                const selectedStyleData = styleOptions?.find(s => s.promptCode === selectedStyle);
+                const currentParamsList = selectedStyleData?.params;
+                const currentAspectRatios = selectedStyleData?.aspectRatioList;
                 const hasParams = currentParamsList && currentParamsList.length > 0;
-                const isParamsValid = !hasParams || currentParamsList.every(param => (paramValues[param.code] || '').trim() !== '');
+                const hasAspectRatios = currentAspectRatios && currentAspectRatios.length > 0;
+                const isParamsValid = (!hasParams || currentParamsList.every(param => (paramValues[param.code] || '').trim() !== '')) && (!hasAspectRatios || selectedAspectRatio);
 
                 return (
                   <>
@@ -598,6 +654,45 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                       </div>
                     )}
 
+                    {/* 宽高比选择 */}
+                    {hasAspectRatios && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">Aspect Ratio</p>
+                        <div className="grid grid-cols-3 gap-2">
+                          {currentAspectRatios!.map((ratio: string) => {
+                            // 生成比例预览图示
+                            let preview: React.ReactNode = null;
+                            if (ratio === 'auto') {
+                              preview = <Icon name="LuArrowLeftRight" className="h-4 w-4" />;
+                            } else {
+                              const parts = ratio.split(':');
+                              const w = parseInt(parts[0]);
+                              const h = parseInt(parts[1]);
+                              if (!isNaN(w) && !isNaN(h) && w > 0) {
+                                const fixedW = 24; // px
+                                const fixedH = Math.round((fixedW * h) / w);
+                                preview = <div className="border border-dashed border-muted-foreground/40" style={{ width: fixedW, height: fixedH }} />;
+                              }
+                            }
+
+                            return (
+                              <div
+                                key={ratio}
+                                className={cn(
+                                  'cursor-pointer select-none text-sm py-2 text-center border-2 border-dashed rounded-md flex flex-col items-center gap-1',
+                                  selectedAspectRatio === ratio ? 'border-primary bg-primary/10' : 'border-muted-foreground/30'
+                                )}
+                                onClick={() => setSelectedAspectRatio(ratio)}
+                              >
+                                {preview}
+                                <span>{ratio}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                     {!hasParams && <p className="text-sm text-muted-foreground">No additional parameters required. Click confirm to start generation.</p>}
 
                     <DialogFooter className="pt-4">
@@ -606,6 +701,17 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer }: { imageS
                         onClick={() => {
                           setShowParamDialog(false);
                           handleGenerate();
+                          // 生成后滚动到结果展示区域（若节点未就绪则稍后重试）
+                          setTimeout(() => {
+                            if (resultRef.current) {
+                              resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            } else {
+                              // 再延迟一次，确保渲染完成
+                              setTimeout(() => {
+                                resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }, 300);
+                            }
+                          }, 0);
                         }}
                       >
                         Confirm

@@ -2,13 +2,15 @@ import { Button } from '@/types/blocks/base';
 
 export interface StyleOption {
   /** 样式唯一编码 */
-  code: string;
+  promptCode: string;
   /** 样式名称 */
   name: string;
   /** 样式描述 */
   description: string;
   /** 示例图片 URL，用于列表展示 */
   demoImageUrl: string;
+  /** 支持的宽高比 */
+  aspectRatioList: string[];
   /**
    * 参数列表 用于替换
    */
@@ -57,7 +59,6 @@ export interface ImageStyleTransfer {
     uploadFirstMessage?: string;
     selectedBadgeText?: string;
   };
-  styleOptions?: StyleOption[];
   fileFormats?: string;
   processingDuration?: number;
   progressTexts?: {

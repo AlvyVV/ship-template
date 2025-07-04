@@ -7,14 +7,14 @@ import { ItemGenerate } from '@/types/item/image-generate';
 export async function POST(req: Request) {
   try {
     // 1. 解析请求参数
-    const { code, imageUrl, userId, aspectRatio, n, params } = await req.json();
-    if (!code || !imageUrl) {
+    const { promptCode, imageUrl, userId, aspectRatio, n, params } = await req.json();
+    if (!promptCode || !imageUrl) {
       return respErr('invalid params');
     }
 
     // 2. 查询 item_configs 获取 content 配置
     const pgClient = getPgWrapperClient();
-    const { data: configData, error } = await pgClient.from('item_configs').select('content').eq('code', code).eq('project_id', process.env.PROJECT_ID).eq('is_deleted', false).single();
+    const { data: configData, error } = await pgClient.from('item_configs').select('content').eq('code', promptCode).eq('project_id', process.env.PROJECT_ID).eq('is_deleted', false).single();
     if (error || !configData?.content) {
       console.error('config not found', error, configData);
       return respErr('config not found');
@@ -58,8 +58,9 @@ export async function POST(req: Request) {
     const payload = {
       projectId: process.env.PROJECT_ID,
       userId: userId || undefined,
+      aspectRatio: aspectRatio,
       creditCode: 'IMAGE-STYLE',
-      bizCode: code,
+      bizCode: promptCode,
       type: 'IMAGE',
       oriMeta: content,
     };
