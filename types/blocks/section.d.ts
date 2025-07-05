@@ -6,6 +6,8 @@ export interface SectionItem {
   label?: string;
   icon?: string;
   image?: Image;
+  compareLeftImage?: Image;
+  compareRightImage?: Image;
   buttons?: Button[];
   url?: string;
   target?: string;

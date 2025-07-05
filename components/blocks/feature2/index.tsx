@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import Fade from 'embla-carousel-fade';
 import Icon from '@/components/icon';
+import {ImageCompareSlider} from '@/components/ui/image-compare-slider';
 import { Section as SectionType } from '@/types/blocks/section';
 
 const DURATION = 5000;
@@ -89,9 +90,17 @@ export default function Feature2({ section }: { section: SectionType }) {
             >
               <CarouselContent>
                 {section.items?.map((item, i) => (
-                  <CarouselItem key={i}>
-                    <div>
-                      <img src={item.image?.src} alt={item.image?.alt || item.title} className="max-h-auto w-full object-cover lg:max-h-none rounded-md" />
+                    <CarouselItem key={i}>
+                      <div>
+                        {item.compareLeftImage && item.compareRightImage ? (
+                            <ImageCompareSlider
+                                leftImage={item.compareLeftImage.src ? item.compareLeftImage.src : ''}
+                                rightImage={item.compareRightImage.src ? item.compareRightImage.src : ''}
+                                className="rounded-md overflow-hidden"
+                        />
+                      ) : (
+                        <img src={item.image?.src} alt={item.image?.alt || item.title} className="max-h-auto w-full object-cover lg:max-h-none rounded-md" />
+                      )}
                     </div>
                   </CarouselItem>
                 ))}
