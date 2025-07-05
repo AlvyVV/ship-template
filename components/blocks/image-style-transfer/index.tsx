@@ -368,7 +368,6 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
             <Icon name="LuSparkles" className="h-8 w-8 text-primary" />
             <h1 className="text-4xl font-bold text-primary">{imageStyleTransfer.title}</h1>
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{imageStyleTransfer.description}</p>
         </div>
 
         {/* Image Comparison Section */}
