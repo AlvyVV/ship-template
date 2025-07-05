@@ -26,7 +26,7 @@ export default function Feature3({ section }: { section: SectionType }) {
         </div>
         <div>
           <Tabs defaultValue="tab-1">
-            <TabsList className="relative grid items-start gap-6 lg:grid-cols-4">
+            <TabsList className="relative grid items-start gap-6 lg:grid-cols-3">
               <div className="absolute left-4 right-0 top-[30px] -z-10 hidden h-px bg-input lg:block"></div>
               {section.items?.map((item, index) => {
                 return (
