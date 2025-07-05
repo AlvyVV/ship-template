@@ -22,6 +22,8 @@ export interface Section {
   label?: string;
   icon?: string;
   image?: Image;
+  compareLeftImage?: Image;
+  compareRightImage?: Image;
   buttons?: Button[];
   items?: SectionItem[];
 }

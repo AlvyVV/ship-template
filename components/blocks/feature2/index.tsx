@@ -1,36 +1,12 @@
-'use client';
-
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import { useEffect, useState } from 'react';
-
 import { Badge } from '@/components/ui/badge';
-import Fade from 'embla-carousel-fade';
 import Icon from '@/components/icon';
 import {ImageCompareSlider} from '@/components/ui/image-compare-slider';
 import { Section as SectionType } from '@/types/blocks/section';
-
-const DURATION = 5000;
 
 export default function Feature2({ section }: { section: SectionType }) {
   if (section.disabled) {
     return null;
   }
-
-  const [api, setApi] = useState<CarouselApi>();
-  const [currentAccordion, setCurrentAccordion] = useState('1');
-
-  useEffect(() => {
-    api?.scrollTo(+currentAccordion - 1);
-    const interval = setInterval(() => {
-      setCurrentAccordion(prev => {
-        const next = parseInt(prev) + 1;
-        return next > 3 ? '1' : next.toString();
-      });
-    }, DURATION);
-
-    return () => clearInterval(interval);
-  }, [api, currentAccordion]);
 
   return (
     <section id={section.name} className="py-32">
@@ -44,68 +20,51 @@ export default function Feature2({ section }: { section: SectionType }) {
             )}
             <h2 className="mb-6 text-pretty text-3xl font-bold lg:text-4xl">{section.title}</h2>
             <p className="mb-4 max-w-xl text-muted-foreground lg:max-w-none lg:text-lg">{section.description}</p>
-            <Accordion
-              type="single"
-              value={currentAccordion}
-              onValueChange={value => {
-                setCurrentAccordion(value);
-                console.log(value);
-                api?.scrollTo(+value - 1);
-              }}
-            >
+            
+            {/* 直接展示列表内容 */}
+            <div className="space-y-6">
               {section.items?.map((item, i) => (
-                <AccordionItem key={i} value={(i + 1).toString()} className="border-b-0 border-secondary">
-                  <AccordionTrigger className="text-left data-[state=closed]:text-muted-foreground">
-                    <div className="flex items-center justify-between gap-2">
-                      {item.icon && (
-                        <p className="flex size-9 items-center justify-center rounded-lg bg-muted">
-                          <Icon name={item.icon} className="size-5 shrink-0 lg:size-6" />
-                        </p>
-                      )}
-                      <span className="font-medium lg:text-lg">{item.title}</span>
+                <div 
+                  key={i} 
+                  className="p-4 rounded-lg border border-secondary hover:border-primary/50 transition-all duration-300"
+                >
+                  <div className="flex items-start gap-3">
+                    {item.icon && (
+                      <div className="flex size-9 items-center justify-center rounded-lg bg-muted shrink-0">
+                        <Icon name={item.icon} className="size-5 lg:size-6" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <h3 className="font-medium lg:text-lg mb-2">{item.title}</h3>
+                      <p className="text-muted-foreground text-sm lg:text-base">{item.description}</p>
                     </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground lg:text-base">
-                    {item.description}
-                    <div className="mt-8 h-px bg-muted">
-                      <div
-                        className="h-px animate-progress bg-primary"
-                        style={{
-                          animationDuration: `${DURATION}ms`,
-                        }}
-                      ></div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
+                  </div>
+                </div>
               ))}
-            </Accordion>
+            </div>
           </div>
+          
           <div>
-            <Carousel
-              opts={{
-                duration: 50,
-              }}
-              setApi={setApi}
-              plugins={[Fade()]}
-            >
-              <CarouselContent>
-                {section.items?.map((item, i) => (
-                    <CarouselItem key={i}>
-                      <div>
-                        {item.compareLeftImage && item.compareRightImage ? (
-                            <ImageCompareSlider
-                                leftImage={item.compareLeftImage.src ? item.compareLeftImage.src : ''}
-                                rightImage={item.compareRightImage.src ? item.compareRightImage.src : ''}
-                                className="rounded-md overflow-hidden"
-                        />
-                      ) : (
-                        <img src={item.image?.src} alt={item.image?.alt || item.title} className="max-h-auto w-full object-cover lg:max-h-none rounded-md" />
-                      )}
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+            {/* 展示section级别的图片 */}
+            {section.compareLeftImage && section.compareRightImage ? (
+              <ImageCompareSlider
+                leftImage={section.compareLeftImage.src || ''}
+                rightImage={section.compareRightImage.src || ''}
+                leftImageLabel="处理前"
+                rightImageLabel="处理后"
+                className="rounded-md overflow-hidden"
+              />
+            ) : section.image ? (
+              <img 
+                src={section.image.src} 
+                alt={section.image.alt || section.title} 
+                className="max-h-auto w-full object-cover lg:max-h-none rounded-md" 
+              />
+            ) : (
+              <div className="flex items-center justify-center h-64 bg-muted rounded-md">
+                <p className="text-muted-foreground">暂无图片</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
