@@ -581,16 +581,12 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
 
                         <div className="text-center">
                           <h3 className="font-semibold text-sm">{style.name}</h3>
-                          <p className="text-xs text-muted-foreground mt-1">{style.description}</p>
                         </div>
 
                         {/* 未上传或上传中时禁用按钮 */}
                         <Button
                           size="sm"
-                          className={cn(
-                            'w-full',
-                            !uploadedImage && 'before:content-[attr(data-upload-message)] before:text-xs before:opacity-60'
-                          )}
+                          className={cn('w-full', !uploadedImage && 'before:content-[attr(data-upload-message)] before:text-xs before:opacity-60')}
                           disabled={!uploadedImage || isUploading}
                           data-upload-message={imageStyleTransfer.styleSelection?.uploadFirstMessage}
                           onClick={e => {
