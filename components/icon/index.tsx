@@ -1,108 +1,56 @@
-"use client";
+'use client';
 
-import * as Ai from "react-icons/ai"; // Ant Design icons
-import * as Bi from "react-icons/bi"; // Boxicons
-import * as Bs from "react-icons/bs"; // Bootstrap icons
-import * as Cg from "react-icons/cg"; // Circum icons
-import * as Ci from "react-icons/ci"; // css.gg
-import * as Di from "react-icons/di"; // Devicons
-import * as Fa from "react-icons/fa"; // Font Awesome icons
-import * as Fa6 from "react-icons/fa6"; // Font Awesome 6 icons
-import * as Fc from "react-icons/fc"; // Flat Color icons
-import * as Fi from "react-icons/fi"; // Feather icons
-import * as Gi from "react-icons/gi"; // Game Icons
-import * as Go from "react-icons/go"; // Github Octicons icons
-import * as Gr from "react-icons/gr"; // Grommet-Icons
-import * as Hi from "react-icons/hi"; // Heroicons
-import * as Hi2 from "react-icons/hi2"; // Heroicons 2
-import * as Im from "react-icons/im"; // IcoMoon Free
-import * as Io from "react-icons/io"; // Ionicons 4
-import * as Io5 from "react-icons/io5"; // Ionicons 5
-import * as Lia from "react-icons/lia"; // Icons8 Line Awesome
-import * as Lu from "react-icons/lu"; // Lucide Icons
-import * as Md from "react-icons/md"; // Material Design icons
-import * as Pi from "react-icons/pi"; // Phosphor Icons
-import * as Ri from "react-icons/ri"; // Remix icons
-import * as Rx from "react-icons/rx"; // Radix Icons
-import * as Si from "react-icons/si"; // Simple Icons
-import * as Sl from "react-icons/sl"; // Simple Line Icons
-import * as Tb from "react-icons/tb"; // Tabler Icons
-import * as Tfi from "react-icons/tfi"; // Themify Icons
-import * as Ti from "react-icons/ti"; // Typicons
-import * as Vsc from "react-icons/vsc"; // VS Code icons
-import * as Wi from "react-icons/wi"; // Weather icons
+import {
+  RiImageEditLine,
+  RiLandscapeAiLine,
+  RiBrainLine,
+  RiApps2Line,
+  RiTeamLine,
+  RiInstagramLine,
+  RiDiscordFill,
+  RiChatQuoteLine,
+  RiTwitterXFill,
+  RiMenuLine,
+  RiGalleryLine,
+  RiMouseLine,
+  RiAspectRatioLine,
+  RiShuffleLine,
+  RiShieldStarLine,
+  RiArrowRightUpLine,
+} from 'react-icons/ri';
 
-import { ReactNode } from "react";
-
-// Map of prefixes to icon packages
-const iconPackages: { [key: string]: any } = {
-  Ai,
-  Bi,
-  Bs,
-  Cg,
-  Ci,
-  Di,
-  Fa,
-  Fa6,
-  Fc,
-  Fi,
-  Gi,
-  Go,
-  Gr,
-  Hi,
-  Hi2,
-  Im,
-  Io,
-  Io5,
-  Lia,
-  Lu,
-  Md,
-  Pi,
-  Ri,
-  Rx,
-  Si,
-  Sl,
-  Tb,
-  Tfi,
-  Ti,
-  Vsc,
-  Wi,
+// 精确映射每个具体图标
+const iconMap: { [key: string]: React.ElementType } = {
+  RiImageEditLine,
+  RiMenuLine,
+  RiBrainLine,
+  RiInstagramLine,
+  RiDiscordFill,
+  RiLandscapeAiLine,
+  RiShuffleLine,
+  RiApps2Line,
+  RiTeamLine,
+  RiChatQuoteLine,
+  RiTwitterXFill,
+  RiGalleryLine,
+  RiMouseLine,
+  RiAspectRatioLine,
+  RiArrowRightUpLine,
+  RiShieldStarLine,
 };
 
-export default function Icon({
-  name,
-  className,
-  onClick,
-}: {
-  name: string;
-  className?: string;
-  onClick?: () => void;
-}) {
-  function getIcon(name: string): ReactNode {
-    // Extract prefix (first two characters)
-    const prefix = name.slice(0, 2);
-
-    // Get the corresponding icon package
-    const iconPackage = iconPackages[prefix];
-    if (iconPackage) {
-      const iconName = name as keyof typeof iconPackage;
-      return iconPackage[iconName] || null;
+export default function Icon({ name, className, onClick }: { name: string; className?: string; onClick?: () => void }) {
+  // 直接从 iconMap 中获取图标组件
+  const IconComponent = iconMap[name];
+  console.log(IconComponent);
+  // 如果找不到图标，返回 null 或者显示警告（开发环境）
+  if (!IconComponent) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`图标 "${name}" 未找到。请确保已在 iconMap 中添加该图标。`);
     }
-
     return null;
   }
 
-  const IconComponent = getIcon(name) as React.ElementType;
-
-  // Return null if no icon is found
-  if (!IconComponent) return null;
-
-  // Render the icon component instead of returning it directly
-  return (
-    <IconComponent
-      className={`${className} cursor-pointer`}
-      onClick={onClick}
-      style={{ cursor: onClick ? "pointer" : "default" }}
-    />
-  );
+  // 渲染图标组件
+  return <IconComponent className={`${className} cursor-pointer`} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }} />;
 }

@@ -27,7 +27,8 @@
       "Bash(pnpm lint:*)",
       "WebFetch(domain:nextjs.org)",
       "WebFetch(domain:nextjs.org)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(pnpm analyze:*)"
     ],
     "deny": []
   }

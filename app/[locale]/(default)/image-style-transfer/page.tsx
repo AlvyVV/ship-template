@@ -31,6 +31,7 @@ export default async function ImageStyleTransferPage() {
   const styleOptions = data.map((records: { content: StyleOption }) => records.content) as StyleOption[];
   return (
     <div className="min-h-screen">
+      
       <ImageStyleTransferBlock imageStyleTransfer={imageStyleTransferData.content} styleOptions={styleOptions} />
     </div>
   );
