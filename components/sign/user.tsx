@@ -48,19 +48,17 @@ export default function SignUser({ user }: { user: User }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mx-4">
         <DropdownMenuLabel className="text-center truncate">{user.nickname}</DropdownMenuLabel>
-        {/* <DropdownMenuSeparator /> */}
-        {/* <DropdownMenuItem className="flex justify-center cursor-pointer">
-          <Link href="/my-orders">{t('user.user_center')}</Link>
-        </DropdownMenuItem> */}
         <DropdownMenuSeparator />
-
-        {/* <DropdownMenuItem className="flex justify-center cursor-pointer">
-          <Link href="/my-chat" target="_blank">
-            {t('user.my_chat')}
+        <DropdownMenuItem className="flex justify-center cursor-pointer">
+          <Link href="/my-credits">{t('my_credits.title')}</Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="flex justify-center cursor-pointer">
+          <Link href="/my-media-records" target="_blank">
+            {t('my_media_records.title')}
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuSeparator /> */}
-
+        <DropdownMenuSeparator />
         <DropdownMenuItem className="flex justify-center cursor-pointer" onClick={handleSignOut}>
           {t('user.sign_out')}
         </DropdownMenuItem>

@@ -43,6 +43,7 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
       {page.hero && <Hero hero={page.hero} />}
       {page.introduce && <Feature1 section={page.introduce} />}
       {page.usage && <Feature3 section={page.usage} />}
+      {page.cta && <CTA section={page.cta} />}
       {page.benefit && <Feature2 section={page.benefit} />}
       {page.feature && <Feature section={page.feature} />}
       {page.showcase && <Showcase section={page.showcase} />}
@@ -50,7 +51,6 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
       {page.pricing && <Pricing pricing={page.pricing} />}
       {page.testimonial && <Testimonial section={page.testimonial} />}
       {page.faq && <FAQ section={page.faq} />}
-      {page.cta && <CTA section={page.cta} />}
     </>
   );
 }

@@ -124,7 +124,7 @@
     "rating_tip": "How do you feel about ShipAny?",
     "placeholder": "Leave your words here..."
   },
-  "my_media_record": {
+  "my_media_records": {
     "title": "My Media Records",
     "description": "Your generated or uploaded media records.",
     "table": {

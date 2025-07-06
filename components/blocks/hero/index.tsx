@@ -62,7 +62,7 @@ export default function Hero({ hero }: { hero: HeroType }) {
               </div>
             )}
             {hero.tip && <p className="mt-8 text-md text-muted-foreground">{hero.tip}</p>}
-            {hero.showHappyUsers && <HappyUsers />}
+            {/* {hero.showHappyUsers && <HappyUsers />} */}
           </div>
         </div>
       </section>

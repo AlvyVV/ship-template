@@ -22,7 +22,7 @@ export default async function MyMediaRecordPage() {
     return (
       <div className="text-center flex flex-col items-center justify-center h-full py-16 gap-4">
         <Icon name="RiEmotionSadFill" className="w-8 h-8" />
-        <span>{t('my_media_record.no_records')}</span>
+        <span>{t('my_media_records.no_records')}</span>
       </div>
     );
   }
@@ -30,28 +30,28 @@ export default async function MyMediaRecordPage() {
   const columns: TableColumn[] = [
     {
       name: 'createdAt',
-      title: t('my_media_record.table.created_at'),
+      title: t('my_media_records.table.created_at'),
       callback: item => dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       name: 'status',
-      title: t('my_media_record.table.status'),
+      title: t('my_media_records.table.status'),
     },
 
     {
       name: 'bizCode',
-      title: t('my_media_record.table.biz_code'),
+      title: t('my_media_records.table.biz_code'),
     },
     {
       name: 'resultUrls',
       type: 'image',
-      title: t('my_media_record.table.biz_code'),
+      title: t('my_media_records.table.biz_code'),
     },
   ];
 
   const table: TableSlotType = {
-    title: t('my_media_record.title'),
-    description: t('my_media_record.description'),
+    title: t('my_media_records.title'),
+    description: t('my_media_records.description'),
     columns,
     data: list.items,
   };

@@ -23,7 +23,7 @@ export default async function ({ children }: { children: ReactNode }) {
         //   isActive: false,
         // },
         {
-          title: t('my_media_record.title'),
+          title: t('my_media_records.title'),
           url: '/my-media-records',
           icon: 'RiImage2Line',
           isActive: false,

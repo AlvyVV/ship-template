@@ -50,8 +50,6 @@ export default function Feature2({ section }: { section: SectionType }) {
               <ImageCompareSlider
                 leftImage={section.compareLeftImage.src || ''}
                 rightImage={section.compareRightImage.src || ''}
-                leftImageLabel="处理前"
-                rightImageLabel="处理后"
                 className="rounded-md overflow-hidden"
               />
             ) : section.image ? (
@@ -62,7 +60,7 @@ export default function Feature2({ section }: { section: SectionType }) {
               />
             ) : (
               <div className="flex items-center justify-center h-64 bg-muted rounded-md">
-                <p className="text-muted-foreground">暂无图片</p>
+                <p className="text-muted-foreground">No Image</p>
               </div>
             )}
           </div>
