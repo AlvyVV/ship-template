@@ -43,6 +43,7 @@ const iconMap: { [key: string]: React.ElementType } = {
   RiCloseFill,
   RiFocus3Line,
   RiPaletteLine,
+  RiSpeedUpLine,
   RiSparkling2Line,
   RiGalleryLine,
   RiInstagramLine,
