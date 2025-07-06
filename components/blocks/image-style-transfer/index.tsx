@@ -365,7 +365,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2">
-            <Icon name="LuSparkles" className="h-8 w-8 text-primary" />
+            <Icon name="RiSparkling2Line" className="h-8 w-8 text-primary" />
             <h1 className="text-4xl font-bold text-primary">{imageStyleTransfer.title}</h1>
           </div>
         </div>
@@ -374,7 +374,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Icon name="LuImage" className="h-5 w-5" />
+              <Icon name="RiFileImageLine" className="h-5 w-5" />
               {imageStyleTransfer.uploadSection?.title}
             </CardTitle>
             <CardDescription>{imageStyleTransfer.uploadSection?.description}</CardDescription>
@@ -402,14 +402,14 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
                     <CardContent className="h-full flex items-center justify-center p-2 md:p-4">
                       <div className="text-center space-y-4">
                         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                          <Icon name="LuUpload" className="h-8 w-8 text-muted-foreground" />
+                          <Icon name="RiUpload2Line" className="h-8 w-8 text-muted-foreground" />
                         </div>
                         <div>
                           <h4 className="font-semibold">{imageStyleTransfer.uploadSection?.uploadPlaceholder?.title}</h4>
                           <p className="text-sm text-muted-foreground">{imageStyleTransfer.fileFormats}</p>
                         </div>
                         <Button onClick={() => fileInputRef.current?.click()}>
-                          <Icon name="LuImage" className="mr-2 h-4 w-4" />
+                          <Icon name="RiFileImageLine" className="mr-2 h-4 w-4" />
                           {imageStyleTransfer.uploadSection?.uploadPlaceholder?.buttonText}
                         </Button>
                       </div>
@@ -425,7 +425,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
                         </div>
                       )}
                       <button onClick={handleRemoveImage} className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white p-1 rounded-full z-10">
-                        <Icon name="LuX" className="h-4 w-4" />
+                        <Icon name="RiCloseFill" className="h-4 w-4" />
                       </button>
                       <Image
                         src={uploadedImage || '/placeholder.svg'}
@@ -458,7 +458,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
                     <CardContent className="h-full flex items-center justify-center p-2 md:p-4">
                       <div className="text-center space-y-4">
                         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                          <Icon name="LuSparkles" className="h-8 w-8 text-muted-foreground" />
+                          <Icon name="RiSparkling2Line" className="h-8 w-8 text-muted-foreground" />
                         </div>
                         <div>
                           <h4 className="font-semibold">{imageStyleTransfer.resultSection?.uploadFirstMessage?.title}</h4>
@@ -472,7 +472,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
                     <CardContent className="flex-1 flex items-center justify-center p-2 md:p-4">
                       <div className="text-center space-y-4">
                         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                          <Icon name="LuSparkles" className="h-8 w-8 text-primary animate-spin" />
+                          <Icon name="RiSparkling2Line" className="h-8 w-8 text-primary animate-spin" />
                         </div>
                         <div>
                           <h4 className="font-semibold">{imageStyleTransfer.resultSection?.processingMessage?.title}</h4>
@@ -518,7 +518,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
                         {imageStyleTransfer.resultSection?.tryAnotherButton?.title}
                       </Button>
                       <Button onClick={handleDownload}>
-                        <Icon name="LuDownload" className="mr-2 h-4 w-4" />
+                        <Icon name="RiDownloadLine" className="mr-2 h-4 w-4" />
                         {imageStyleTransfer.resultSection?.downloadButton?.title}
                       </Button>
                     </div>
@@ -529,7 +529,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
                     <CardContent className="h-full flex items-center justify-center p-2 md:p-4">
                       <div className="text-center space-y-4">
                         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                          <Icon name="LuPalette" className="h-8 w-8 text-muted-foreground" />
+                          <Icon name="RiPaletteLine" className="h-8 w-8 text-muted-foreground" />
                         </div>
                         <div>
                           <h4 className="font-semibold">{imageStyleTransfer.resultSection?.readyMessage?.title}</h4>
@@ -553,7 +553,7 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Icon name="LuPalette" className="h-5 w-5" />
+              <Icon name="RiPaletteLine" className="h-5 w-5" />
               {imageStyleTransfer.styleSelection?.title}
             </CardTitle>
           </CardHeader>
@@ -584,24 +584,22 @@ export default function ImageStyleTransferBlock({ imageStyleTransfer, styleOptio
                           <p className="text-xs text-muted-foreground mt-1">{style.description}</p>
                         </div>
 
-                        {/* 如未上传图片则提示先上传；上传中或未上传时按钮禁用 */}
-                        {uploadedImage ? (
-                          <Button
-                            size="sm"
-                            className="w-full"
-                            disabled={isUploading}
-                            onClick={e => {
-                              e.stopPropagation();
-                              handleOpenGenerateDialog(style.promptCode);
-                            }}
-                          >
-                            Generate
-                          </Button>
-                        ) : (
-                          <Badge variant="outline" className="w-full justify-center text-xs opacity-60">
-                            {imageStyleTransfer.styleSelection?.uploadFirstMessage}
-                          </Badge>
-                        )}
+                        {/* 未上传或上传中时禁用按钮 */}
+                        <Button
+                          size="sm"
+                          className={cn(
+                            'w-full',
+                            !uploadedImage && 'before:content-[attr(data-upload-message)] before:text-xs before:opacity-60'
+                          )}
+                          disabled={!uploadedImage || isUploading}
+                          data-upload-message={imageStyleTransfer.styleSelection?.uploadFirstMessage}
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleOpenGenerateDialog(style.promptCode);
+                          }}
+                        >
+                          {!uploadedImage ? '' : 'Generate'}
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
