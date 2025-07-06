@@ -10,13 +10,12 @@
   "my_credits.table.updated_at": "更新时间",
   "my_credits.table.status": "状态",
 
-
-  "my_media_record.title": "我的媒体记录",
-  "my_media_record.description": "您生成或上传的所有媒体记录。",
-  "my_media_record.table.created_at": "创建时间",
-  "my_media_record.table.type": "类型",
-  "my_media_record.table.status": "状态",
-  "my_media_record.table.name": "名称",
-  "my_media_record.table.biz_code": "业务编码",
-  "my_media_record.no_records": "暂无媒体记录。"
+  "my_media_records.title": "我的媒体记录",
+  "my_media_records.description": "您生成或上传的所有媒体记录。",
+  "my_media_records.table.created_at": "创建时间",
+  "my_media_records.table.type": "类型",
+  "my_media_records.table.status": "状态",
+  "my_media_records.table.name": "名称",
+  "my_media_records.table.biz_code": "业务编码",
+  "my_media_records.no_records": "暂无媒体记录。"
 }
