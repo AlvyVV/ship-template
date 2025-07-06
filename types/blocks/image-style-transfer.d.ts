@@ -65,4 +65,8 @@ export interface ImageStyleTransfer {
     processing?: string;
     complete?: string;
   };
+  what?: Section;
+  feature?: Section;
+  why?: Section;
+  faq?: Section;
 }
