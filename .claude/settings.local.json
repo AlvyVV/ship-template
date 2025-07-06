@@ -24,7 +24,10 @@
       "Bash(pnpm dev:*)",
       "mcp__ide__getDiagnostics",
       "Bash(npm view:*)",
-      "Bash(pnpm lint:*)"
+      "Bash(pnpm lint:*)",
+      "WebFetch(domain:nextjs.org)",
+      "WebFetch(domain:nextjs.org)",
+      "Bash(pkill:*)"
     ],
     "deny": []
   }

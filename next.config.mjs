@@ -31,6 +31,18 @@ const nextConfig = {
   async redirects() {
     return [];
   },
+  // 优化HMR配置
+  webpack: (config, { dev }) => {http://localhost:3000/
+    if (dev) {
+      // 改善HMR性能
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+        ignored: /node_modules/,
+      };
+    }
+    return config;
+  },
 };
 
 // Make sure experimental mdx flag is enabled
