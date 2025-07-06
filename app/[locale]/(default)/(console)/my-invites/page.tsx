@@ -12,6 +12,7 @@ import { findUserByUuid } from "@/models/user";
 import { getTranslations } from "next-intl/server";
 import dayjs from "dayjs";
 import { redirect } from "next/navigation";
+import Image from 'next/image';
 
 export default async function () {
   const t = await getTranslations();
@@ -91,9 +92,12 @@ export default async function () {
       callback: (item) => (
         <div className="flex items-center gap-2">
           {item?.user?.avatarUrl && (
-            <img
-              src={item.user?.avatarUrl || ""}
-              className="w-8 h-8 rounded-full"
+            <Image
+              src={item.user.avatarUrl}
+              alt={item.user.nickname || 'User avatar'}
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-full object-cover"
             />
           )}
           <span>{item.user?.nickname}</span>

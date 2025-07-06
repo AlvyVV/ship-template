@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/icon';
 import {ImageCompareSlider} from '@/components/ui/image-compare-slider';
 import { Section as SectionType } from '@/types/blocks/section';
+import Image from 'next/image';
 
 export default function Feature2({ section }: { section: SectionType }) {
   if (section.disabled) {
@@ -52,10 +53,12 @@ export default function Feature2({ section }: { section: SectionType }) {
                 rightImage={section.compareRightImage.src || ''}
                 className="rounded-md overflow-hidden"
               />
-            ) : section.image ? (
-              <img 
+            ) : section.image?.src ? (
+              <Image 
                 src={section.image.src} 
-                alt={section.image.alt || section.title} 
+                alt={section.image.alt || section.title || 'Feature image'} 
+                width={600}
+                height={400}
                 className="max-h-auto w-full object-cover lg:max-h-none rounded-md" 
               />
             ) : (

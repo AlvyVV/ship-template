@@ -2,6 +2,7 @@ import { Footer as FooterType } from '@/types/blocks/footer';
 import Icon from '@/components/icon';
 import { getLocale } from 'next-intl/server';
 import { getComponent } from '@/services/load-components';
+import Image from 'next/image';
 
 export default async function Footer() {
   const locale = await getLocale();
@@ -20,7 +21,15 @@ export default async function Footer() {
               {footer.brand && (
                 <div>
                   <div className="flex items-center justify-center gap-2 lg:justify-start">
-                    {footer.brand.logo && <img src={footer.brand.logo.src} alt={footer.brand.logo.alt || footer.brand.title} className="h-11" />}
+                    {footer.brand.logo?.src && (
+                      <Image 
+                        src={footer.brand.logo.src} 
+                        alt={footer.brand.logo.alt || footer.brand.title || 'Logo'} 
+                        width={44}
+                        height={44}
+                        className="h-11 w-auto object-contain"
+                      />
+                    )}
                     {footer.brand.title && <p className="text-3xl font-semibold">{footer.brand.title}</p>}
                   </div>
                   {footer.brand.description && <p className="mt-6 text-md text-muted-foreground">{footer.brand.description}</p>}

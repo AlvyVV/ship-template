@@ -12,6 +12,7 @@ import ThemeToggle from '@/components/theme/toggle';
 import { cn } from '@/lib/utils';
 import { getComponent } from '@/services/load-components';
 import { getLocale } from 'next-intl/server';
+import Image from 'next/image';
 
 export default async function Header() {
   const locale = await getLocale();
@@ -27,7 +28,16 @@ export default async function Header() {
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
             <Link href={(header.brand?.url as any) || '/'} className="flex items-center gap-2">
-              {header.brand?.logo?.src && <img src={header.brand.logo.src} alt={header.brand.logo.alt || header.brand.title} className="w-8" />}
+              {header.brand?.logo?.src && (
+                <Image 
+                  src={header.brand.logo.src} 
+                  alt={header.brand.logo.alt || header.brand.title || 'Logo'} 
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 object-contain"
+                  priority
+                />
+              )}
               {header.brand?.title && <span className="text-xl text-primary font-bold">{header.brand?.title || ''}</span>}
             </Link>
             <div className="flex items-center">
@@ -112,7 +122,15 @@ export default async function Header() {
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             <Link href={(header.brand?.url || '/') as any} className="flex items-center gap-2">
-              {header.brand?.logo?.src && <img src={header.brand.logo.src} alt={header.brand.logo.alt || header.brand.title} className="w-8" />}
+              {header.brand?.logo?.src && (
+                <Image 
+                  src={header.brand.logo.src} 
+                  alt={header.brand.logo.alt || header.brand.title || 'Logo'} 
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 object-contain"
+                />
+              )}
               {header.brand?.title && <span className="text-xl font-bold">{header.brand?.title || ''}</span>}
             </Link>
             <Sheet>
@@ -125,7 +143,15 @@ export default async function Header() {
                 <SheetHeader>
                   <SheetTitle>
                     <Link href={(header.brand?.url || '/') as any} className="flex items-center gap-2">
-                      {header.brand?.logo?.src && <img src={header.brand.logo.src} alt={header.brand.logo.alt || header.brand.title} className="w-8" />}
+                      {header.brand?.logo?.src && (
+                        <Image 
+                          src={header.brand.logo.src} 
+                          alt={header.brand.logo.alt || header.brand.title || 'Logo'} 
+                          width={32}
+                          height={32}
+                          className="w-8 h-8 object-contain"
+                        />
+                      )}
                       {header.brand?.title && <span className="text-xl font-bold">{header.brand?.title || ''}</span>}
                     </Link>
                   </SheetTitle>

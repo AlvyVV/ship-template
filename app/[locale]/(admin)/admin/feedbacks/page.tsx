@@ -3,6 +3,7 @@ import TableSlot from "@/components/dashboard/slots/table";
 import { Table as TableSlotType } from "@/types/slots/table";
 import { getFeedbacks } from "@/models/feedback";
 import dayjs from "dayjs";
+import Image from 'next/image';
 
 export default async function () {
   const feedbacks = await getFeedbacks(1, 50);
@@ -18,9 +19,12 @@ export default async function () {
 
         return (
           <div className="flex items-center gap-2">
-            <img
-              src={row.user?.avatarUrl || ""}
-              className="w-8 h-8 rounded-full"
+            <Image
+              src={row.user.avatarUrl}
+              alt={row.user.nickname || 'User avatar'}
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-full object-cover"
             />
             <span>{row.user?.nickname}</span>
           </div>

@@ -21,6 +21,9 @@ const nextConfig = {
   reactStrictMode: false,
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   images: {
+    // 配置 Cloudflare 图像优化
+    loader: 'custom',
+    loaderFile: './lib/cloudflare-image-loader.ts',
     remotePatterns: [
       {
         protocol: 'https',
@@ -32,7 +35,7 @@ const nextConfig = {
     return [];
   },
   // 优化HMR配置
-  webpack: (config, { dev }) => {http://localhost:3000/
+  webpack: (config, { dev }) => {
     if (dev) {
       // 改善HMR性能
       config.watchOptions = {

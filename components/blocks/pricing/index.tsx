@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { loadStripe } from "@stripe/stripe-js";
 import { toast } from "sonner";
 import { useAppContext } from "@/contexts/app";
+import Image from 'next/image';
 
 export default function Pricing({ pricing }: { pricing: PricingType }) {
   if (pricing.disabled) {
@@ -242,10 +243,12 @@ export default function Pricing({ pricing }: { pricing: PricingType }) {
                               handleCheckout(item, true);
                             }}
                           >
-                            <img
+                            <Image
                               src="/imgs/cnpay.png"
                               alt="cnpay"
-                              className="w-20 h-10 rounded-lg"
+                              width={80}
+                              height={40}
+                              className="w-20 h-10 rounded-lg object-contain"
                             />
                           </div>
                         </div>

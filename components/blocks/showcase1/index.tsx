@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Section as SectionType } from '@/types/blocks/section';
+import Image from 'next/image';
 
 export default function Showcase1({ section }: { section: SectionType }) {
   if (section.disabled) {
@@ -82,7 +83,12 @@ export default function Showcase1({ section }: { section: SectionType }) {
                     <div className="flex aspect-3/2 overflow-clip rounded-xl">
                       <div className="flex-1">
                         <div className="relative h-full w-full origin-bottom transition duration-300 group-hover:scale-105">
-                          <img src={item.image?.src} alt={item.image?.alt || item.title} className="h-full w-full object-cover object-center" />
+                          <Image 
+                            src={item.image?.src || ''} 
+                            alt={item.image?.alt || item.title || 'Showcase image'} 
+                            fill
+                            className="object-cover object-center" 
+                          />
                         </div>
                       </div>
                     </div>

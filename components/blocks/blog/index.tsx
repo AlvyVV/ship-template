@@ -1,5 +1,6 @@
 import Icon from "@/components/icon";
 import { Blog as BlogType } from "@/types/blocks/blog";
+import Image from 'next/image';
 
 export default function Blog({ blog }: { blog: BlogType }) {
   if (blog.disabled) {
@@ -30,11 +31,12 @@ export default function Blog({ blog }: { blog: BlogType }) {
             >
               <div className="flex flex-col overflow-clip rounded-xl border border-border">
                 {item.coverUrl && (
-                  <div>
-                    <img
+                  <div className="relative aspect-video">
+                    <Image
                       src={item.coverUrl}
-                      alt={item.title || ""}
-                      className="aspect-16/9 h-full w-full object-cover object-center"
+                      alt={item.title || "Blog post image"}
+                      fill
+                      className="object-cover object-center"
                     />
                   </div>
                 )}

@@ -6,6 +6,7 @@ import { Hero as HeroType } from '@/types/blocks/hero';
 import Icon from '@/components/icon';
 import { Link } from '@/i18n/routing';
 import Threads from '@/components/ui/Threads/Threads';
+import Image from 'next/image';
 
 export default function Hero({ hero }: { hero: HeroType }) {
   if (hero.disabled) {
@@ -25,7 +26,14 @@ export default function Hero({ hero }: { hero: HeroType }) {
         <div className="container">
           {hero.showBadge && (
             <div className="flex items-center justify-center mb-8">
-              <img src="/imgs/badges/phdaily.svg" alt="phdaily" className="h-10 object-cover" />
+              <Image 
+                src="/imgs/badges/phdaily.svg" 
+                alt="phdaily" 
+                width={200}
+                height={40}
+                className="h-10 w-auto object-contain"
+                priority
+              />
             </div>
           )}
           <div className="text-center">

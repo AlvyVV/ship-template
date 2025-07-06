@@ -3,6 +3,7 @@ import TableSlot from "@/components/dashboard/slots/table";
 import { Table as TableSlotType } from "@/types/slots/table";
 import { getUsers } from "@/models/user";
 import dayjs from "dayjs";
+import Image from 'next/image';
 
 export default async function () {
   const users = await getUsers(1, 50);
@@ -15,7 +16,13 @@ export default async function () {
       name: "avatarUrl",
       title: "Avatar",
       callback: (row) => (
-        <img src={row.avatarUrl} className="w-10 h-10 rounded-full" />
+        <Image 
+          src={row.avatarUrl} 
+          alt={row.nickname || 'User avatar'}
+          width={40}
+          height={40}
+          className="w-10 h-10 rounded-full object-cover" 
+        />
       ),
     },
     {
