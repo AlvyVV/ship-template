@@ -44,12 +44,12 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   }, []);
 
   return (
-    <NextThemesProvider forcedTheme={theme} {...props}>
-      {children}
-
-      <Toaster position="top-center" richColors />
-      <SignModal />
-      <Analytics />
-    </NextThemesProvider>
+      <NextThemesProvider forcedTheme={theme} {...props}>
+        <Analytics>
+          {children}
+        </Analytics>
+        <Toaster position="top-center" richColors/>
+        <SignModal/>
+      </NextThemesProvider>
   );
 }
