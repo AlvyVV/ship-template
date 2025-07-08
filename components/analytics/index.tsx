@@ -13,23 +13,24 @@ export default function Analytics({children}: AnalyticsProps) {
 
     if (clarityId) {
         Clarity.init(clarityId);
-
-        if (!plausibleDomain || !plausibleScriptUrl) {
-            return <>{children}</>;
-        }
-
-        return (
-            <PlausibleProvider
-                domain={plausibleDomain}
-                hash={true}
-                trackOutboundLinks={true}
-                taggedEvents={true}
-                trackFileDownloads={true}
-                selfHosted={true}
-                customDomain={plausibleScriptUrl}
-            >
-                {children}
-            </PlausibleProvider>
-        );
     }
+    console.log("xsdfx", plausibleDomain);
+    if (!plausibleDomain || !plausibleScriptUrl) {
+        return <>{children}</>;
+    }
+
+    console.log("ssddsf", plausibleScriptUrl);
+    return (
+        <PlausibleProvider
+            domain={plausibleDomain}
+            hash={true}
+            trackOutboundLinks={true}
+            taggedEvents={true}
+            trackFileDownloads={true}
+            selfHosted={true}
+            customDomain={plausibleScriptUrl}
+        >
+            {children}
+        </PlausibleProvider>
+    );
 }
