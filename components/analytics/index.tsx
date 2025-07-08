@@ -18,13 +18,6 @@ export default function Analytics({children}: AnalyticsProps) {
             return <>{children}</>;
         }
 
-        if (process.env.NODE_ENV !== "production") {
-            if (children) {
-                return <>{children}</>;
-            }
-            return null;
-        }
-
         return (
             <PlausibleProvider
                 domain={plausibleDomain}
