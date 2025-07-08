@@ -1,24 +1,21 @@
-"use client";
+'use client';
 
-import { PricingItem, Pricing as PricingType } from "@/types/blocks/pricing";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useEffect, useState } from "react";
+import { PricingItem, Pricing as PricingType } from '@/types/blocks/pricing';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useEffect, useState } from 'react';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import Icon from "@/components/icon";
-import { Label } from "@/components/ui/label";
-import { loadStripe } from "@stripe/stripe-js";
-import { toast } from "sonner";
-import { useAppContext } from "@/contexts/app";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import Icon from '@/components/icon';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { useAppContext } from '@/contexts/app';
 import Image from 'next/image';
+import { apiClient } from '@/lib/api-client';
 
 export default function Pricing({ pricing }: { pricing: PricingType }) {
-  if (pricing.disabled) {
-    return null;
-  }
-
   const { user, setShowSignModal } = useAppContext();
+  console.log('pricingxx', pricing);
 
   const [group, setGroup] = useState(pricing.groups?.[0]?.name);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,59 +29,28 @@ export default function Pricing({ pricing }: { pricing: PricingType }) {
       }
 
       const params = {
-        productId: item.productId,
-        productName: item.productName,
-        credits: item.credits,
-        interval: item.interval,
-        amount: cnPay ? item.cnAmount : item.amount,
-        currency: cnPay ? "cny" : item.currency,
-        validMonths: item.validMonths,
+        productCode: item.productCode,
       };
 
       setIsLoading(true);
       setProductId(item.productId);
 
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      });
+      const resp = await apiClient.post<{
+        data: {
+          url: string;
+          id: string;
+        };
+      }>('/orders/checkout', params);
 
-      if (response.status === 401) {
-        setIsLoading(false);
-        setProductId(null);
-
-        setShowSignModal(true);
-        return;
-      }
-
-      const { code, message, data } = await response.json();
-      if (code !== 0) {
-        toast.error(message);
-        return;
-      }
-
-      const { publicKey, sessionId } = data;
-
-      const stripe = await loadStripe(publicKey);
-      if (!stripe) {
-        toast.error("checkout failed");
-        return;
-      }
-
-      const result = await stripe.redirectToCheckout({
-        sessionId: sessionId,
-      });
-
-      if (result.error) {
-        toast.error(result.error.message);
+      if (resp.data.url) {
+        window.open(resp.data.url, '_blank');
+      } else {
+        toast.error('checkout failed');
       }
     } catch (e) {
-      console.log("checkout failed: ", e);
+      console.log('checkout failed: ', e);
 
-      toast.error("checkout failed");
+      toast.error('checkout failed');
     } finally {
       setIsLoading(false);
       setProductId(null);
@@ -103,12 +69,8 @@ export default function Pricing({ pricing }: { pricing: PricingType }) {
     <section id={pricing.name} className="py-16">
       <div className="container">
         <div className="mx-auto mb-12 text-center">
-          <h2 className="mb-4 text-4xl font-semibold lg:text-5xl">
-            {pricing.title}
-          </h2>
-          <p className="text-muted-foreground lg:text-lg">
-            {pricing.description}
-          </p>
+          <h2 className="mb-4 text-4xl font-semibold lg:text-5xl">{pricing.title}</h2>
+          <p className="text-muted-foreground lg:text-lg">{pricing.description}</p>
         </div>
         <div className="w-full flex flex-col items-center gap-2">
           {pricing.groups && pricing.groups.length > 0 && (
@@ -116,31 +78,18 @@ export default function Pricing({ pricing }: { pricing: PricingType }) {
               <RadioGroup
                 value={group}
                 className={`h-full grid-cols-${pricing.groups.length}`}
-                onValueChange={(value) => {
+                onValueChange={value => {
                   setGroup(value);
                 }}
               >
                 {pricing.groups.map((item, i) => {
                   return (
-                    <div
-                      key={i}
-                      className='h-full rounded-md transition-all has-[button[data-state="checked"]]:bg-white'
-                    >
-                      <RadioGroupItem
-                        value={item.name || ""}
-                        id={item.name}
-                        className="peer sr-only"
-                      />
-                      <Label
-                        htmlFor={item.name}
-                        className="flex h-full cursor-pointer items-center justify-center px-7 font-semibold text-muted-foreground peer-data-[state=checked]:text-primary"
-                      >
+                    <div key={i} className='h-full rounded-md transition-all has-[button[data-state="checked"]]:bg-white'>
+                      <RadioGroupItem value={item.name || ''} id={item.name} className="peer sr-only" />
+                      <Label htmlFor={item.name} className="flex h-full cursor-pointer items-center justify-center px-7 font-semibold text-muted-foreground peer-data-[state=checked]:text-primary">
                         {item.title}
                         {item.label && (
-                          <Badge
-                            variant="outline"
-                            className="border-primary bg-primary px-1.5 ml-1 text-primary-foreground"
-                          >
+                          <Badge variant="outline" className="border-primary bg-primary px-1.5 ml-1 text-primary-foreground">
                             {item.label}
                           </Badge>
                         )}
@@ -151,72 +100,32 @@ export default function Pricing({ pricing }: { pricing: PricingType }) {
               </RadioGroup>
             </div>
           )}
-          <div
-            className={`w-full mt-0 grid gap-6 md:grid-cols-${
-              pricing.items?.filter(
-                (item) => !item.group || item.group === group
-              )?.length
-            }`}
-          >
+          <div className={`w-full mt-0 grid gap-6 md:grid-cols-${pricing.items?.filter(item => !item.group || item.group === group)?.length}`}>
             {pricing.items?.map((item, index) => {
               if (item.group && item.group !== group) {
                 return null;
               }
 
               return (
-                <div
-                  key={index}
-                  className={`rounded-lg p-6 ${
-                    item.isFeatured
-                      ? "border-primary border-2 bg-card text-card-foreground"
-                      : "border-muted border"
-                  }`}
-                >
+                <div key={index} className={`rounded-lg p-6 ${item.isFeatured ? 'border-primary border-2 bg-card text-card-foreground' : 'border-muted border'}`}>
                   <div className="flex h-full flex-col justify-between gap-5">
                     <div>
                       <div className="flex items-center gap-2 mb-4">
-                        {item.title && (
-                          <h3 className="text-xl font-semibold">
-                            {item.title}
-                          </h3>
-                        )}
+                        {item.title && <h3 className="text-xl font-semibold">{item.title}</h3>}
                         <div className="flex-1"></div>
                         {item.label && (
-                          <Badge
-                            variant="outline"
-                            className="border-primary bg-primary px-1.5 text-primary-foreground"
-                          >
+                          <Badge variant="outline" className="border-primary bg-primary px-1.5 text-primary-foreground">
                             {item.label}
                           </Badge>
                         )}
                       </div>
                       <div className="flex items-end gap-2 mb-4">
-                        {item.originalPrice && (
-                          <span className="text-xl text-muted-foreground font-semibold line-through">
-                            {item.originalPrice}
-                          </span>
-                        )}
-                        {item.price && (
-                          <span className="text-5xl font-semibold">
-                            {item.price}
-                          </span>
-                        )}
-                        {item.unit && (
-                          <span className="block font-semibold">
-                            {item.unit}
-                          </span>
-                        )}
+                        {item.originalPrice && <span className="text-xl text-muted-foreground font-semibold line-through">{item.originalPrice}</span>}
+                        {item.price && <span className="text-5xl font-semibold">{item.price}</span>}
+                        {item.unit && <span className="block font-semibold">{item.unit}</span>}
                       </div>
-                      {item.description && (
-                        <p className="text-muted-foreground">
-                          {item.description}
-                        </p>
-                      )}
-                      {item.featuresTitle && (
-                        <p className="mb-3 mt-6 font-semibold">
-                          {item.featuresTitle}
-                        </p>
-                      )}
+                      {item.description && <p className="text-muted-foreground">{item.description}</p>}
+                      {item.featuresTitle && <p className="mb-3 mt-6 font-semibold">{item.featuresTitle}</p>}
                       {item.features && (
                         <ul className="flex flex-col gap-3">
                           {item.features.map((feature, fi) => {
@@ -243,13 +152,7 @@ export default function Pricing({ pricing }: { pricing: PricingType }) {
                               handleCheckout(item, true);
                             }}
                           >
-                            <Image
-                              src="/imgs/cnpay.png"
-                              alt="cnpay"
-                              width={80}
-                              height={40}
-                              className="w-20 h-10 rounded-lg object-contain"
-                            />
+                            <Image src="/imgs/cnpay.png" alt="cnpay" width={80} height={40} className="w-20 h-10 rounded-lg object-contain" />
                           </div>
                         </div>
                       ) : null}
@@ -264,27 +167,14 @@ export default function Pricing({ pricing }: { pricing: PricingType }) {
                             handleCheckout(item);
                           }}
                         >
-                          {(!isLoading ||
-                            (isLoading && productId !== item.productId)) && (
-                            <p>{item.button.title}</p>
-                          )}
+                          {(!isLoading || (isLoading && productId !== item.productId)) && <p>{item.button.title}</p>}
 
-                          {isLoading && productId === item.productId && (
-                            <p>{item.button.title}</p>
-                          )}
-                          {isLoading && productId === item.productId && (
-                            <Icon name="RiLoader4Line" className="mr-2 h-4 w-4 animate-spin" />
-                          )}
-                          {item.button.icon && (
-                            <Icon name={item.button.icon} className="size-4" />
-                          )}
+                          {isLoading && productId === item.productId && <p>{item.button.title}</p>}
+                          {isLoading && productId === item.productId && <Icon name="RiLoader4Line" className="mr-2 h-4 w-4 animate-spin" />}
+                          {item.button.icon && <Icon name={item.button.icon} className="size-4" />}
                         </Button>
                       )}
-                      {item.tip && (
-                        <p className="text-muted-foreground text-sm mt-2">
-                          {item.tip}
-                        </p>
-                      )}
+                      {item.tip && <p className="text-muted-foreground text-sm mt-2">{item.tip}</p>}
                     </div>
                   </div>
                 </div>

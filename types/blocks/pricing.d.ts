@@ -1,4 +1,4 @@
-import { Button } from "@/types/blocks/base/button";
+import { Button } from '@/types/blocks/base';
 
 export interface PricingGroup {
   name?: string;
@@ -11,6 +11,7 @@ export interface PricingItem {
   title?: string;
   description?: string;
   label?: string;
+  productCode?: string;
   price?: string;
   originalPrice?: string;
   currency?: string;
@@ -20,12 +21,11 @@ export interface PricingItem {
   button?: Button;
   tip?: string;
   isFeatured?: boolean;
-  interval: "month" | "year" | "one-time";
+  interval: 'MONTH' | 'YEAR' | 'ONE-TIME';
   productId: string;
   productName?: string;
   amount: number;
   cnAmount?: number;
-  currency: string;
   credits?: number;
   validMonths?: number;
   group?: string;

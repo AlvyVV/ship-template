@@ -1,13 +1,11 @@
-import Pricing from "@/components/blocks/pricing";
-import { getPricingPage } from "@/services/page";
+import Pricing from '@/components/blocks/pricing';
+import { getComponent } from '@/services/load-components';
+import { getLocale } from 'next-intl/server';
+import { Pricing as PricingType } from '@/types/blocks/pricing';
 
-export default async function PricingPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const page = await getPricingPage(locale);
+export default async function PricingPage() {
+  const locale = await getLocale();
+  const pricing = await getComponent<PricingType>(locale, 'PRICE');
 
-  return <>{page.pricing && <Pricing pricing={page.pricing} />}</>;
+  return <>{pricing && <Pricing pricing={pricing} />}</>;
 }

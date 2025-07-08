@@ -6,7 +6,7 @@ import Feature1 from '@/components/blocks/feature1';
 import Feature2 from '@/components/blocks/feature2';
 import Feature3 from '@/components/blocks/feature3';
 import Hero from '@/components/blocks/hero';
-import Pricing from '@/components/blocks/pricing';
+import Pricing from './pricing/page';
 import Showcase from '@/components/blocks/showcase';
 import Stats from '@/components/blocks/stats';
 import Testimonial from '@/components/blocks/testimonial';
@@ -48,7 +48,7 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
       {page.feature && <Feature section={page.feature} />}
       {page.showcase && <Showcase section={page.showcase} />}
       {page.stats && <Stats section={page.stats} />}
-      {page.pricing && <Pricing pricing={page.pricing} />}
+      <Pricing />
       {page.testimonial && <Testimonial section={page.testimonial} />}
       {page.faq && <FAQ section={page.faq} />}
     </>

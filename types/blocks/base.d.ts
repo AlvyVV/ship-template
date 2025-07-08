@@ -1,18 +1,8 @@
-import { ReactNode } from "react";
+export type ButtonType = 'button' | 'link';
 
-export type ButtonType = "button" | "link";
+export type ButtonVariant = 'secondary' | 'link' | 'default' | 'destructive' | 'outline' | 'ghost' | null | undefined;
 
-export type ButtonVariant =
-  | "secondary"
-  | "link"
-  | "default"
-  | "destructive"
-  | "outline"
-  | "ghost"
-  | null
-  | undefined;
-
-export type ButtonSize = "sm" | "md" | "lg";
+export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface Button {
   title?: string;
@@ -75,7 +65,7 @@ export interface Tip {
   title?: string;
   description?: string;
   icon?: string;
-  type?: "info" | "warning" | "error";
+  type?: 'info' | 'warning' | 'error';
 }
 
 export interface SocialItem {
