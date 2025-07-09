@@ -52,6 +52,24 @@
       "status": "Status"
     }
   },
+  "pay_success": {
+    "title": "Payment Successful!",
+    "description": "Thank you for your purchase, your order has been successfully completed.",
+    "order_details": "Order Details",
+    "order_info": "Here is your order information",
+    "payment_success": "Payment Successful",
+    "order_number": "Order Number",
+    "amount": "Payment Amount",
+    "order_type": "Order Type",
+    "payment_time": "Payment Time",
+    "product_info": "Product Information",
+    "one_time": "One-time Purchase",
+    "subscription": "Subscription",
+    "view_orders": "View My Orders",
+    "back_home": "Back to Home",
+    "thank_you": "Thank You for Your Trust",
+    "thank_you_message": "We will continue to provide you with quality service. If you have any questions, please feel free to contact us."
+  },
   "my_credits": {
     "title": "My Credits",
     "left_tip": "left credits: {left_credits}",
