@@ -6,16 +6,22 @@ import {cn} from '@/lib/utils';
 const fontSans = FontSans({
     subsets: ['latin'],
     variable: '--font-sans',
+    display: 'swap', // 优化字体加载
+    preload: true,   // 预加载关键字体
 });
 
 const fontSerif = FontSerif({
     subsets: ['latin'],
     variable: '--font-serif',
+    display: 'swap',
+    preload: false,  // 非关键字体不预加载
 });
 
 const fontMono = FontMono({
     subsets: ['latin'],
-    variable: '--font-serif',
+    variable: '--font-mono', // 修复变量名
+    display: 'swap',
+    preload: false,
 });
 
 export const metadata = {
