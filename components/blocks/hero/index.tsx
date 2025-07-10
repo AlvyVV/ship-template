@@ -1,11 +1,8 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import HappyUsers from './happy-users';
-import HeroBg from './bg';
 import { Hero as HeroType } from '@/types/blocks/hero';
 import Icon from '@/components/icon';
 import { Link } from '@/i18n/routing';
-import Threads from '@/components/ui/Threads/Threads';
 import Image from 'next/image';
 
 export default function Hero({ hero }: { hero: HeroType }) {
@@ -22,7 +19,7 @@ export default function Hero({ hero }: { hero: HeroType }) {
   return (
     <>
       <section className="relative py-24 overflow-hidden">
-        <HeroBg />
+        {/*<HeroBg />*/}
         <div className="container">
           {hero.showBadge && (
             <div className="flex items-center justify-center mb-8">
