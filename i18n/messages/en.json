@@ -48,8 +48,13 @@
       "product_name": "Product Name",
       "amount": "Amount",
       "paid_at": "Paid At",
+      "created_at": "Created At",
       "github_username": "GitHub Username",
-      "status": "Status"
+      "status": "Status",
+      "status_pending": "Pending",
+      "status_completed": "Completed",
+      "status_failed": "Failed",
+      "status_cancelled": "Cancelled"
     }
   },
   "pay_success": {

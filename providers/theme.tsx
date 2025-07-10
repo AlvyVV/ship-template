@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { cacheGet } from "@/lib/cache";
 import { useAppContext } from "@/contexts/app";
 import { useEffect } from "react";
+import { PaymentModalProvider } from "@/components/providers/payment-modal-provider";
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   const { theme, setTheme } = useAppContext();
@@ -50,6 +51,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
         </Analytics>
         <Toaster position="top-center" richColors/>
         <SignModal/>
+        <PaymentModalProvider/>
       </NextThemesProvider>
   );
 }

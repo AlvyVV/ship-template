@@ -138,14 +138,13 @@ export async function updateCreditForOrder(order: Order) {
   }
 }
 
-export async function getUserCreditRecords(userUuid: string, page: number = 1, limit: number = 50) {
+export async function getUserCreditRecords(userUuid: string, page: number = 1, limit: number = 2000) {
   try {
     // 调用 vv-api 获取用户积分流水记录
     const response = await apiClient.get<any>(`/console/credit-records?page=${page}&limit=${limit}`);
 
     // vv-api 返回格式: { status: 'success', data: { items: [...], total: number, page: number, limit: number } }
     const payload = response?.data || {};
-    console.log('getUserCreditRecords payload', payload);
     return {
       items: payload.items || [],
       total: payload.total ?? 0,

@@ -47,8 +47,13 @@
       "product_name": "产品名称",
       "amount": "金额",
       "paid_at": "支付时间",
+      "created_at": "创建时间",
       "github_username": "GitHub 用户名",
-      "status": "状态"
+      "status": "状态",
+      "status_pending": "待支付",
+      "status_completed": "已完成",
+      "status_failed": "失败",
+      "status_cancelled": "已取消"
     }
   },
   "pay_success": {

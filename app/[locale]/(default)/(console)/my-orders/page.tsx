@@ -1,68 +1,75 @@
-import { getOrdersByPaidEmail, getOrdersByUserUuid } from '@/models/order';
-import { getUserEmail, getUserUuid } from '@/services/user';
-
+import Icon from '@/components/icon';
+import TableBlock from '@/components/blocks/table';
 import { TableColumn } from '@/types/blocks/table';
-import TableSlot from '@/components/console/slots/table';
 import { Table as TableSlotType } from '@/types/slots/table';
-import { getTranslations } from 'next-intl/server';
 import dayjs from 'dayjs';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
+import { getUserUuid } from '@/services/user';
+import { getMyOrders } from '@/models/order';
 
-export default async function () {
+export default async function MyOrdersPage() {
   const t = await getTranslations();
-
   const userUuid = await getUserUuid();
-  const userEmail = await getUserEmail();
-
-  const callbackUrl = `${process.env.NEXT_PUBLIC_WEB_URL}/my-orders`;
   if (!userUuid) {
+    const callbackUrl = `${process.env.NEXT_PUBLIC_WEB_URL}/my-orders`;
     redirect(`/auth/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`);
   }
 
-  let orders = await getOrdersByUserUuid(userUuid);
-  if (!orders || orders.length === 0) {
-    orders = await getOrdersByPaidEmail(userEmail);
+  const list = await getMyOrders();
+  if (!list.items || list.items.length === 0) {
+    return (
+      <div className="text-center flex flex-col items-center justify-center h-full py-16 gap-4">
+        <Icon name="RiEmotionSadFill" className="w-8 h-8" />
+        <span>{t('my_orders.no_orders')}</span>
+      </div>
+    );
   }
 
   const columns: TableColumn[] = [
-    { name: 'orderNo', title: t('my_orders.table.order_no') },
-    { name: 'paidEmail', title: t('my_orders.table.email') },
-    { name: 'productName', title: t('my_orders.table.product_name') },
+    {
+      name: 'orderNo',
+      title: t('my_orders.table.order_no'),
+    },
+    {
+      name: 'createdAt',
+      title: t('my_orders.table.created_at'),
+      callback: item => dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      name: 'status',
+      title: t('my_orders.table.status'),
+      callback: item => {
+        const statusMap: { [key: string]: string } = {
+          'PENDING': t('my_orders.table.status_pending'),
+          'COMPLETED': t('my_orders.table.status_completed'),
+          'FAILED': t('my_orders.table.status_failed'),
+          'CANCELLED': t('my_orders.table.status_cancelled'),
+        };
+        return statusMap[item.status] || item.status;
+      },
+    },
     {
       name: 'amount',
       title: t('my_orders.table.amount'),
-      callback: (item: any) => `${item.currency.toUpperCase() === 'CNY' ? '¥' : '$'} ${item.amount / 100}`,
+      callback: item => {
+        const amount = Number(item.amount) / 100; // 转换为元
+        return `${item.currency?.toUpperCase() || 'USD'} ${amount.toFixed(2)}`;
+      },
     },
     {
       name: 'paidAt',
       title: t('my_orders.table.paid_at'),
-      callback: (item: any) => dayjs(item.paidAt).format('YYYY-MM-DD HH:mm:ss'),
+      callback: item => item.paidAt ? dayjs(item.paidAt).format('YYYY-MM-DD HH:mm:ss') : '-',
     },
   ];
 
   const table: TableSlotType = {
     title: t('my_orders.title'),
-    toolbar: {
-      items: [
-        {
-          title: t('my_orders.read_docs'),
-          icon: 'RiBookLine',
-          url: 'https://docs.shipany.ai',
-          target: '_blank',
-          variant: 'outline',
-        },
-        {
-          title: t('my_orders.join_discord'),
-          icon: 'RiDiscordFill',
-          url: 'https://discord.gg/HQNnrzjZQS',
-          target: '_blank',
-        },
-      ],
-    },
-    columns: columns,
-    data: orders,
-    emptyMessage: t('my_orders.no_orders'),
+    description: t('my_orders.description'),
+    columns,
+    data: list.items,
   };
 
-  return <TableSlot {...table} />;
+  return <TableBlock {...table} />;
 }

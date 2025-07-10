@@ -1,11 +1,33 @@
 import { Order } from '@/types/order';
 import { getPgWrapperClient } from '@/lib/db-wrapper';
+import { apiClient } from '@/lib/api-client';
 
-export enum OrderStatus {
-  Created = 'created',
-  Paid = 'paid',
-  Deleted = 'deleted',
+// 列表响应类型
+export interface OrderListResponse {
+  items: Order[];
+  total: number;
+  page: number;
+  limit: number;
 }
+
+/**
+ * 获取当前登录用户的订单列表
+ * 通过后端 /orders 接口获取，接口会自动识别当前用户
+ */
+export async function getMyOrders(page: number = 1, limit: number = 50): Promise<OrderListResponse> {
+  const res = await apiClient.get<any>(`/orders?page=${page}&limit=${limit}`);
+  const payload = res?.data || {};
+  return {
+    items: payload.items || [],
+    total: payload.total ?? 0,
+    page: payload.page ?? page,
+    limit: payload.limit ?? limit,
+  } as OrderListResponse;
+}
+
+// 兼容旧代码，保留原方法名称，但内部调用新实现
+// TODO: 后续可删除此别名
+export const getUserOrders = getMyOrders as (page?: number, limit?: number) => Promise<OrderListResponse>;
 
 export async function insertOrder(order: Order) {
   const supabase = getPgWrapperClient();
