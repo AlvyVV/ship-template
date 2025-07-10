@@ -1,13 +1,9 @@
 export interface TableColumn {
+  key?: string;
   name?: string;
-  title?: string;
   type?: string;
-  options?: any[];
-  className?: string;
+  title: string;
+  dataIndex?: string;
   callback?: (item: any) => any;
-}
-
-export interface Table {
-  columns: TableColumn[];
-  data: any[];
+  render?: (value: any, record: any, index: number) => React.ReactNode;
 }

@@ -1,11 +1,19 @@
-import { Brand, Nav, Social, Account, Library } from "@/types/blocks/base";
+export interface SidebarItem {
+  title: string;
+  url?: string;
+  icon?: string;
+  isActive?: boolean;
+  children?: SidebarItem[];
+}
 
 export interface Sidebar {
-  disabled?: boolean;
-  brand?: Brand;
-  nav?: Nav;
-  library?: Library;
-  social?: Social;
-  account?: Account;
-  bottomNav?: Nav;
+  items?: SidebarItem[];
+  nav?: {
+    items: SidebarItem[];
+  };
+  user?: {
+    name?: string;
+    email?: string;
+    avatar?: string;
+  };
 }

@@ -21,8 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/icon";
 import { Input } from "@/components/ui/input";
-import MarkdownEditor from "@/components/blocks/mdeditor";
-import Editor from "@/components/blocks/editor";
 
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -186,14 +184,15 @@ export default function ({
                           ))}
                         </SelectContent>
                       </Select>
-                    ) : item.type === "markdownEditor" ? (
-                      <MarkdownEditor
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
-                    ) : item.type === "editor" ||
+                    ) : item.type === "markdownEditor" || 
+                      item.type === "editor" ||
                       item.type === "richtextEditor" ? (
-                      <Editor value={field.value} onChange={field.onChange} />
+                      <Textarea
+                        {...field}
+                        placeholder={item.placeholder}
+                        className="min-h-[200px]"
+                        {...item.attributes}
+                      />
                     ) : (
                       <Input
                         {...field}

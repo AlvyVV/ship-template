@@ -1,7 +1,13 @@
-import { TableColumn } from "@/types/blocks/table";
-import { Slot } from "@/types/slots/base";
-
-export interface Table extends Slot {
-  columns?: TableColumn[];
+export interface Table {
+  title?: string;
+  description?: string;
+  data?: any[];
+  tip?: {
+    title?: string;
+    description?: string;
+  };
+  toolbar?: any;
+  columns?: any[];
+  actions?: any;
   emptyMessage?: string;
 }

@@ -14,7 +14,7 @@ export default function ({ ...form }: FormSlotType) {
       </div>
       {form.tip && (
         <p className="text-sm text-muted-foreground">
-          {form.tip.description || form.tip.title}
+          {form.tip}
         </p>
       )}
       {form.toolbar && <Toolbar items={form.toolbar.items} />}

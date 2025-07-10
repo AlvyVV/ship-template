@@ -5,6 +5,9 @@ import { getTranslations } from "next-intl/server";
 import { getUserApikeys, ApikeyStatus } from "@/models/apikey";
 import { getUserUuid } from "@/services/user";
 import dayjs from "dayjs";
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 import { Badge } from "@/components/ui/badge";
 
 export default async function () {
