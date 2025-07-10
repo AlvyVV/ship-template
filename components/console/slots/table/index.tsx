@@ -13,7 +13,7 @@ export default function ({ ...table }: TableSlotType) {
       {table.tip && <p className="text-sm text-muted-foreground">{table.tip.description || table.tip.title}</p>}
       {table.toolbar && <Toolbar items={table.toolbar.items} />}
       <Separator />
-      <TableBlock {...table} />
+      <TableBlock columns={table.columns ?? []} data={table.data ?? []} emptyMessage={table.emptyMessage} />
     </div>
   );
 }

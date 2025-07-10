@@ -10,4 +10,11 @@ export interface Table {
   columns?: any[];
   actions?: any;
   emptyMessage?: string;
+  crumb?: {
+    items?: Array<{
+      title: string;
+      url?: string;
+      isActive?: boolean;
+    }>;
+  };
 }
