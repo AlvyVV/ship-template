@@ -8,6 +8,7 @@ import Feature1 from '@/components/blocks/feature1';
 import Feature2 from '@/components/blocks/feature2';
 import Feature from '@/components/blocks/feature';
 import FAQ from '@/components/blocks/faq';
+import Pricing from "@/app/[locale]/(default)/pricing/page";
 
 export async function generateMetadata() {
   const locale = await getLocale();
@@ -38,6 +39,7 @@ export default async function ImageStyleTransferPage() {
     <div className="min-h-screen">
       <ImageStyleTransferBlock imageStyleTransfer={content} styleOptions={styleOptions} />
       {content.what && <Feature1 section={content.what} />}
+      <Pricing />
       {content.feature && <Feature section={content.feature} />}
       {content.why && <Feature2 section={content.why} />}
       {content.faq && <FAQ section={content.faq} />}
